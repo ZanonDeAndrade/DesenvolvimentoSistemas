@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 
 
 export default function Users(){
@@ -16,6 +17,15 @@ export default function Users(){
     }, [])
     
     return(
-        <h2>Users</h2>
+        <div>
+            <h2>Users</h2>
+            {users.map((user: any) => (
+                <div>
+                    <p>{user.id}</p>
+                    <p>{user.name}</p>
+                    <Link to ={`/users/${user.id}`}> Ver Detalhes </Link>
+                </div>
+            ))}
+        </div>
     )
 };
