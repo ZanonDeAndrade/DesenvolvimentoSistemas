@@ -1,0 +1,57 @@
+.home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 80px);
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .home-container h1 {
+    margin-bottom: 1rem;
+    color: #ef5350;
+  }
+  
+  .home-container p {
+    max-width: 600px;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+  
+  .pokemon-image-container {
+    margin: 2rem 0;
+  }
+  
+  .home-pokemon-image {
+    width: 200px;
+    height: auto;
+    animation: bounce 2s infinite;
+  }
+  
+  .explore-button {
+    background-color: #ef5350;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .explore-button:hover {
+    background-color: #e53935;
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-15px);
+    }
+  }
+  

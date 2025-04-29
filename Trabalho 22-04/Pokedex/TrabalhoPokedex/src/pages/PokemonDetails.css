@@ -1,0 +1,120 @@
+.pokemon-details-container {
+    padding: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .pokemon-details-container h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #ef5350;
+  }
+  
+  .pokemon-details-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .pokemon-image-container {
+    margin-bottom: 2rem;
+  }
+  
+  .pokemon-detail-image {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .pokemon-info {
+    width: 100%;
+  }
+  
+  .info-item {
+    display: flex;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .info-label {
+    font-weight: bold;
+    width: 100px;
+  }
+  
+  .info-value {
+    flex: 1;
+  }
+  
+  .abilities-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .ability-item {
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+  }
+  
+  .back-button {
+    background-color: #ef5350;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .back-button:hover {
+    background-color: #e53935;
+  }
+  
+  .error-container {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .error {
+    color: #ef5350;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .pokemon-details-card {
+      background-color: #2a2a2a;
+    }
+    
+    .info-item {
+      border-bottom: 1px solid #444;
+    }
+    
+    .ability-item {
+      background-color: #333;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .pokemon-details-card {
+      padding: 1.5rem;
+    }
+    
+    .pokemon-detail-image {
+      width: 150px;
+      height: 150px;
+    }
+  }
+  
