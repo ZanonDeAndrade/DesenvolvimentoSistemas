@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PokemonBasic } from '../types';
-import './PokemonCard.css';
+import './PokemonCards.css';
 
 interface PokemonCardProps {
   pokemon: PokemonBasic;

@@ -56,28 +56,6 @@
     transition: all 0.2s ease;
   }
   
-  @media screen and (max-width: 960px) {
-    .nav-menu {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      position: absolute;
-      top: 80px;
-      left: -100%;
-      opacity: 1;
-      transition: all 0.5s ease;
-    }
-  
-    .nav-menu.active {
-      background: #ef5350;
-      left: 0;
-      opacity: 1;
-      transition: all 0.5s ease;
-      z-index: 1;
-    }
-  
-    .nav-item {
-      height: 60px;
-    }
-  }
+
+
   

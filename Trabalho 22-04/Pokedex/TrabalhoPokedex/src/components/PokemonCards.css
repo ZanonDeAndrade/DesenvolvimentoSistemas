@@ -42,13 +42,4 @@
     background-color: #2563eb;
   }
   
-  @media (prefers-color-scheme: dark) {
-    .pokemon-card {
-      background-color: #2a2a2a;
-    }
-    
-    .pokemon-name {
-      color: #f1f1f1;
-    }
-  }
   
