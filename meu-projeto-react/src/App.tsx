@@ -1,16 +1,17 @@
-// App.tsx
 import React from "react";
-import Header from "./Header";
-import Body from "./Body";
-import Footer from "./Footer";
+import { UserProvider } from "./context/UserContext";
+import UserList from "./components/UserList";
+import UserDetails from "./components/UserDetails";
 
 const App: React.FC = () => {
   return (
-    <div>
-      <Header />
-      <Body />
-      <Footer />
-    </div>
+    <UserProvider>
+      <div>
+        <h1>Exemplo de Context API - Usuários</h1>
+        <UserList />
+        <UserDetails />
+      </div>
+    </UserProvider>
   );
 };
 
