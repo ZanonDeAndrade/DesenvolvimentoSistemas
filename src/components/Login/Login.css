@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;600;700&display=swap');
+
+.login-page {
+  font-family: 'Jost', sans-serif;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: #0f0f0f;
+  color: #fff;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.login-page .background-shapes {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 10% 20%, #ff4d4d33 0%, transparent 60%),
+              radial-gradient(circle at 80% 80%, #ff4d4d22 0%, transparent 70%);
+  z-index: 1;
+}
+
+.login-page .login-container {
+  position: relative;
+  z-index: 2;
+  background-color: #1a1a1a;
+  padding: 60px 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(255, 77, 77, 0.2);
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+}
+
+.login-page .login-container h1 {
+  font-size: 3rem;
+  color: #ff4d4d;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.login-page .login-container p {
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+  color: #ccc;
+  font-weight: 400;
+}
+
+.login-page .input-field {
+  width: 100%;
+  padding: 16px 16px 16px 16px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 12px;
+  background-color: #2a2a2a;
+  color: #fff;
+  font-size: 1.1rem;
+  outline: none;
+  transition: box-shadow 0.3s ease;
+  box-sizing: border-box;
+}
+
+.login-page .input-field:focus {
+  box-shadow: 0 0 8px #ff4d4d;
+  background-color: #3a3a3a;
+}
+
+.login-page .password-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.login-page .password-container .input-field {
+  padding-right: 40px;
+  flex-grow: 1;
+  margin-bottom: 0;
+}
+
+.login-page .show-password {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.login-page .show-password svg {
+  fill: #fff;
+  width: 24px;
+  height: 24px;
+  transition: fill 0.3s ease;
+}
+
+.login-page .show-password:hover svg {
+  fill: #ff4d4d;
+}
+
+.login-page .forgot-password {
+  font-size: 0.9rem;
+  color: #ccc;
+  margin-bottom: 30px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+}
+
+.login-page .login-button {
+  display: inline-block;
+  padding: 16px;
+  background-color: #ff4d4d;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-bottom: 20px;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.login-page .login-button:hover {
+  background-color: #e64343;
+  box-shadow: 0 0 10px #ff4d4d;
+}
+
+.login-page .cancel-link {
+  display: block;
+  color: #ccc;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+
+.login-page .cancel-link:hover {
+  color: #ff4d4d;
+}
