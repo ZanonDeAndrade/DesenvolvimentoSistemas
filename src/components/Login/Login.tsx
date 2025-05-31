@@ -60,8 +60,14 @@ const Login= () => {
           <p className='forgot-password'>Esqueci minha senha</p>
 
           
-            <Link to="/Profile/Profile" className="login-button">Entrar</Link>
-            <Link to="/" className="cancel-link">Cancelar</Link>
+            <Link 
+              to="/Shop/Shop" 
+              className="login-button">Entrar
+            </Link>
+            <Link 
+              to="/" 
+              className="cancel-link">Cancelar
+            </Link>
         </div>
     </div>
   );

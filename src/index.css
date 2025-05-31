@@ -4,3 +4,32 @@
   max-width: 100%;
   box-sizing: border-box;
 }
+
+/* Este arquivo contém estilos GLOBAIS que afetam todo o seu aplicativo. */
+
+/* Regras para garantir que o HTML, BODY e o elemento raiz (#root) ocupem 100% da tela */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Garante que padding e border sejam incluídos na largura/altura */
+  overflow-x: hidden; /* Previne rolagem horizontal indesejada em todo o aplicativo */
+  /* Você pode definir uma cor de fundo global aqui se quiser que todo o aplicativo tenha um fundo padrão */
+  /* background-color: #f0f0f0; */
+}
+
+/* Regras para a div .App e .container no App.tsx */
+.App {
+  min-height: 100vh; /* Garante que o .App ocupe pelo menos a altura da viewport */
+  display: flex;
+  flex-direction: column; /* Se você tiver um footer ou header fixo, isso ajuda */
+}
+
+.container {
+  flex-grow: 1; /* Permite que o container cresça e ocupe o espaço disponível */
+  /* Você pode adicionar padding ou margens globais aqui se desejar */
+  /* padding: 20px; */
+}
+
+/* Outros estilos globais que você possa ter, como fontes padrão, resets, etc. */

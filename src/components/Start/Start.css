@@ -16,7 +16,8 @@ body {
 
 .home-container img {
   width: 320px;
-  margin-bottom: 10%;
+  margin-bottom: 15%;
+  margin-top: 18%;
   padding: 50px;
   filter: drop-shadow(0 0 10px #ff4d4d);
 }
