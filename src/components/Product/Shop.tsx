@@ -1,22 +1,33 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { SushiItem } from '../Types/index';
 import { categories, sushiItems } from './SushiData';
+import { useCart } from '../Cart/CartContext';
 import './Shop.css';
+import { ShoppingCart, User } from 'lucide-react';
 
 const Shop: React.FC = () => {
+  const navigate = useNavigate();
+  const { state, addItem } = useCart();
   const [activeCategory, setActiveCategory] = useState('combos');
+
+  console.log("Passou nesse carai", {categories, sushiItems, state} );
+
   const [selectedItem, setSelectedItem] = useState<SushiItem | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [observations, setObservations] = useState('');
 
   const filteredItems = sushiItems.filter(item => item.category === activeCategory);
 
   const openModal = (item: SushiItem) => {
     setSelectedItem(item);
     setQuantity(1);
+    setObservations('');
   };
 
   const closeModal = () => {
     setSelectedItem(null);
+    setObservations('');
   };
 
   const increaseQuantity = () => {
@@ -29,21 +40,47 @@ const Shop: React.FC = () => {
     }
   };
 
+  const handleObservationsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    if (value.length <= 140) {
+      setObservations(value);
+    }
+  };
+
   const addToCart = () => {
     if (selectedItem) {
-      console.log(`Adicionado ao carrinho: ${selectedItem.name} - Quantidade: ${quantity}`);
-      // Aqui você implementaria a lógica do carrinho
+      addItem(selectedItem, quantity, observations.trim() || undefined);
+      
+      // Feedback visual
+      const notification = document.createElement('div');
+      notification.className = 'add-to-cart-notification';
+      notification.textContent = `${selectedItem.name} adicionado ao carrinho!`;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+      
       closeModal();
     }
+  };
+
+  const goToCart = () => {
+    navigate('/Cart/Cart');
   };
 
   return (
     <div className="shop-container">
       <div className="shop-header">
-        <h1>Cardápio</h1>
+        <h1>BEM VINDO ARTHUR</h1>
         <div className="header-actions">
-          <button className="camera-btn">📷</button>
-          <button className="filter-btn">⚙️</button>
+          <button className="filter-btn">
+            <User size={24} />
+          </button>
+
+          <button className="cart-btn" onClick={goToCart}>
+            <ShoppingCart size={24} />
+          </button>
         </div>
       </div>
 
@@ -124,8 +161,10 @@ const Shop: React.FC = () => {
                     <textarea 
                       placeholder="Tem alguma observação? Pode deixar aqui!"
                       maxLength={140}
+                      value={observations}
+                      onChange={handleObservationsChange}
                     ></textarea>
-                    <span className="char-count">0/140</span>
+                    <span className="char-count">{observations.length}/140</span>
                   </div>
                 </div>
               </div>
