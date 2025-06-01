@@ -6,6 +6,7 @@ import { useCart } from '../Cart/CartContext';
 import './Shop.css';
 import { ShoppingCart, User } from 'lucide-react';
 
+// Componente principal da loja
 const Shop: React.FC = () => {
   const navigate = useNavigate();
   const { state, addItem } = useCart();
@@ -51,7 +52,7 @@ const Shop: React.FC = () => {
     if (selectedItem) {
       addItem(selectedItem, quantity, observations.trim() || undefined);
       
-      // Feedback visual
+      //Exibe notificação quando um item é adicionado ao carrinho
       const notification = document.createElement('div');
       notification.className = 'add-to-cart-notification';
       notification.textContent = `${selectedItem.name} adicionado ao carrinho!`;
@@ -65,6 +66,7 @@ const Shop: React.FC = () => {
     }
   };
 
+  // Função para redirecionar para a página do carrinho
   const goToCart = () => {
     navigate('/Cart/Cart');
   };
@@ -84,7 +86,7 @@ const Shop: React.FC = () => {
         </div>
       </div>
 
-      {/* Abas de Categorias */}
+      //Abas de Categorias
       <div className="categories-tabs">
         {categories.map((category) => (
           <button
@@ -98,7 +100,7 @@ const Shop: React.FC = () => {
         ))}
       </div>
 
-      {/* Grid de Produtos */}
+      //Items de uma categoria, importados do SushiData.ts
       <div className="items-grid">
         {filteredItems.map((item) => (
           <div key={item.id} className="item-card" onClick={() => openModal(item)}>
@@ -119,7 +121,7 @@ const Shop: React.FC = () => {
         ))}
       </div>
 
-      {/* Modal de Detalhes */}
+      // Modal para exibir detalhes do item selecionado
       {selectedItem && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

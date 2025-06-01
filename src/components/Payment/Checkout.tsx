@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../Cart/CartContext';
 import './Checkout.css';
 
+
+//Tipagem para o endereço e método de pagamento
 interface Address {
   street: string;
   number: string;
@@ -21,6 +23,8 @@ interface PaymentMethod {
   cashChange?: number;
 }
 
+
+// Componente de Checkout
 const Checkout: React.FC = () => {
   const { state, clearCart } = useCart();
   const navigate = useNavigate();
@@ -33,6 +37,7 @@ const Checkout: React.FC = () => {
     city: '',
     zipCode: ''
   });
+
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>({
     type: 'credit'
@@ -165,7 +170,6 @@ const Checkout: React.FC = () => {
 
       <div className="checkout-content">
         <div className="checkout-form">
-          {/* Seção de Endereço */}
           <div className="form-section">
             <h2>📍 Endereço de Entrega</h2>
             
@@ -250,7 +254,7 @@ const Checkout: React.FC = () => {
             </div>
           </div>
 
-          {/* Seção de Pagamento */}
+          // Método de Pagamento
           <div className="form-section">
             <h2>💳 Método de Pagamento</h2>
             
@@ -300,7 +304,7 @@ const Checkout: React.FC = () => {
               </label>
             </div>
 
-            {/* Campos do Cartão */}
+            //Dados do cartão
             {(paymentMethod.type === 'credit' || paymentMethod.type === 'debit') && (
               <div className="card-details">
                 <div className="form-group">
@@ -359,7 +363,7 @@ const Checkout: React.FC = () => {
               </div>
             )}
 
-            {/* Campo para troco */}
+            //Campo para troco de for em dinheiro
             {paymentMethod.type === 'cash' && (
               <div className="form-group">
                 <label htmlFor="cashChange">Troco para *</label>
@@ -378,7 +382,7 @@ const Checkout: React.FC = () => {
               </div>
             )}
 
-            {/* Informação PIX */}
+            // Informações para PIX
             {paymentMethod.type === 'pix' && (
               <div className="pix-info">
                 <p>📱 Após confirmar o pedido, você receberá o código PIX para pagamento.</p>
@@ -387,7 +391,7 @@ const Checkout: React.FC = () => {
           </div>
         </div>
 
-        {/* Resumo do Pedido */}
+        //Resumo do Pedido
         <div className="order-summary">
           <div className="summary-card">
             <h3>Resumo do Pedido</h3>

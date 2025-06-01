@@ -6,6 +6,7 @@ interface LocationState {
   total: number;
 }
 
+// Componente de confirmação de pedido
 const OrderConfirmation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -13,16 +14,13 @@ const OrderConfirmation: React.FC = () => {
 
   const { orderId, total } = state || { orderId: 'ERR001', total: 0 };
 
+
+  // Função para redirecionar para a página de compras
   const handleNewOrder = () => {
     navigate('/Shop/Shop');
   };
 
-  const handleTrackOrder = () => {
-    // Aqui você implementaria a lógica de rastreamento
-    alert('Funcionalidade de rastreamento será implementada em breve!');
-  };
-
-  return (
+    return (
     <div className="order-confirmation-container">
       <div className="confirmation-card">
         <div className="success-icon">
@@ -61,12 +59,6 @@ const OrderConfirmation: React.FC = () => {
         </div>
 
         <div className="action-buttons">
-          <button 
-            className="track-order-btn"
-            onClick={handleTrackOrder}
-          >
-            📱 Acompanhar Pedido
-          </button>
           
           <button 
             className="new-order-btn"

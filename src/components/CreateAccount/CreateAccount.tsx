@@ -63,6 +63,7 @@ const CreateAccount = () => {
   };
 
 
+  // Função para validar os campos
   const validateFields = () => {
     if (!email.trim()) {
       alert('Por favor, preencha o campo Email');
@@ -81,7 +82,6 @@ const CreateAccount = () => {
     
     return true; 
   };
-
 
 
   return (

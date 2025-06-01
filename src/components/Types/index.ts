@@ -1,3 +1,5 @@
+//Tipagem para o arquivo SushiData
+
 export interface SushiItem {
     id: number;
     name: string;

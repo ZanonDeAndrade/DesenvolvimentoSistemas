@@ -2,14 +2,17 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from './CartContext';
 import './Cart.css';
 
+
 const Cart: React.FC = () => {
   const { state, removeItem, updateQuantity, clearCart } = useCart();
   const navigate = useNavigate();
 
+  //Aumenta a quantidade de um item no carrinho
   const increaseQuantity = (id: number, currentQuantity: number) => {
     updateQuantity(id, currentQuantity + 1);
   };
 
+  //Diminui a quantidade de um item no carrinho ou remove se a quantidade for 1
   const decreaseQuantity = (id: number, currentQuantity: number) => {
     if (currentQuantity > 1) {
       updateQuantity(id, currentQuantity - 1);
@@ -18,16 +21,19 @@ const Cart: React.FC = () => {
     }
   };
 
+  //Remove um item específico do carrinho
   const handleRemoveItem = (id: number) => {
     removeItem(id);
   };
 
+  // Limpa todo o carrinho 
   const handleClearCart = () => {
     if (window.confirm('Tem certeza que deseja limpar o carrinho?')) {
       clearCart();
     }
   };
 
+  //Processa o checkout, redirecionando para a página de checkout
   const handleCheckout = () => {
     if (state.items.length === 0) {
       alert('Seu carrinho está vazio!');
@@ -37,10 +43,12 @@ const Cart: React.FC = () => {
     navigate('/checkout/checkout');
   };
 
+  // Redireciona para a página de compras
   const handleContinueShopping = () => {
     navigate('/shop/shop'); 
   };
 
+  // Renderiza estado vazio do carrinho
   if (state.items.length === 0) {
     return (
       <div className="cart-container">
@@ -63,6 +71,7 @@ const Cart: React.FC = () => {
     );
   }
 
+  // Renderiza carrinho com itens
   return (
     <div className="cart-container">
       <div className="cart-header">
@@ -73,6 +82,7 @@ const Cart: React.FC = () => {
       </div>
 
       <div className="cart-content">
+        // Lista de itens no carrinho
         <div className="cart-items">
           {state.items.map((item, index) => (
             <div key={`${item.id}-${index}`} className="cart-item">

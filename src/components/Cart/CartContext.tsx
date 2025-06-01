@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import type { SushiItem } from '../Types/index';
 
 
-// Tipos
+// Definição dos tipos
 export interface CartItem extends SushiItem {
   quantity: number;
   observations?: string;
@@ -21,6 +21,7 @@ type CartAction =
   | { type: 'UPDATE_QUANTITY'; payload: { id: number; quantity: number } }
   | { type: 'CLEAR_CART' };
 
+
 interface CartContextType {
   state: CartState;
   addItem: (item: SushiItem, quantity: number, observations?: string) => void;
@@ -29,14 +30,14 @@ interface CartContextType {
   clearCart: () => void;
 }
 
-// Estado inicial
+// Estado inicial do carrinho zerado
 const initialState: CartState = {
   items: [],
   total: 0,
   itemCount: 0,
 };
 
-// Reducer
+
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM': {
@@ -67,6 +68,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       const total = newItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0);
 
+
       return {
         items: newItems,
         total,
@@ -74,6 +76,8 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       };
     }
 
+
+    // Ação para remover um item do carrinho
     case 'REMOVE_ITEM': {
       const newItems = state.items.filter(item => item.id !== action.payload.id);
       const total = newItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -124,25 +128,29 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   }
 };
 
-// Context
+
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// Provider
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
+  // Adiciona um item ao carrinho
   const addItem = (item: SushiItem, quantity: number, observations?: string) => {
     dispatch({ type: 'ADD_ITEM', payload: { item, quantity, observations } });
   };
 
+
+  // Remove um item do carrinho
   const removeItem = (id: number) => {
     dispatch({ type: 'REMOVE_ITEM', payload: { id } });
   };
 
+  // Atualiza a quantidade de um item no carrinho
   const updateQuantity = (id: number, quantity: number) => {
     dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
   };
 
+  // Limpa todo o carrinho
   const clearCart = () => {
     dispatch({ type: 'CLEAR_CART' });
   };
@@ -162,7 +170,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
-// Hook personalizado
+
 export const useCart = (): CartContextType => {
   const context = useContext(CartContext);
   if (context === undefined) {
