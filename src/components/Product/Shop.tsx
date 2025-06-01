@@ -86,7 +86,7 @@ const Shop: React.FC = () => {
         </div>
       </div>
 
-      //Abas de Categorias
+      {/*Abas de Categorias*/}
       <div className="categories-tabs">
         {categories.map((category) => (
           <button
@@ -100,7 +100,8 @@ const Shop: React.FC = () => {
         ))}
       </div>
 
-      //Items de uma categoria, importados do SushiData.ts
+    
+      {/*Items de uma categoria, importados do SushiData.ts*/}
       <div className="items-grid">
         {filteredItems.map((item) => (
           <div key={item.id} className="item-card" onClick={() => openModal(item)}>
@@ -121,7 +122,8 @@ const Shop: React.FC = () => {
         ))}
       </div>
 
-      // Modal para exibir detalhes do item selecionado
+      
+      {/*Modal para exibir detalhes do item selecionado*/}
       {selectedItem && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
