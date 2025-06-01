@@ -596,6 +596,7 @@
   .category-tab {
     min-width: 70px;
     padding: 10px 15px;
+    color: #333;
   }
   
   .modal-content {

@@ -1,9 +1,39 @@
-
 import type { SushiItem, CategoryTab } from '../Types/index';
+import AguaCGás from '../../assets/AguaCGás.jpeg';
+import AguaSGás from '../../assets/AguaSGás.jpeg';
+import CervejaCorona from '../../assets/CervejaCorona.jpeg';
+import CocaZero from '../../assets/CocaZero.jpeg';
+import ComboHot from '../../assets/ComboHot.jpeg';
+import ComboImperial from '../../assets/ComboImperial.jpeg';
+import ComboOsaka from '../../assets/ComboOsaka.jpeg';
+import ComboPremium from '../../assets/ComboPremium.jpeg';
+import PepsiBlack from '../../assets/PepsiBlack.jpeg';
+import SashimiSalmão from '../../assets/SashimiSalmão.jpeg';
+import SashimiTrufado from '../../assets/SashimiTrufado.jpeg';
+import TemakiHot from '../../assets/TemakiHot.jpeg';
+import TrioHot from '../../assets/TrioHot.jpeg';
+import UramakiCamarão from '../../assets/UramakiCamarão.jpeg';
+import UramakiFiladélfia from '../../assets/UramakiFiladélfia.jpeg';
+import UramakiFiladélfia2 from '../../assets/UramakiFiladélfia2.jpeg';
+import UramakiKewpie from '../../assets/UramakiKewpie.jpeg';
+import UramakiSkin from '../../assets/UramakiSkin.jpeg';
+import HotDoritos from '../../assets/HotDoritos.jpeg';
+import HotFiladélfia from '../../assets/HotFiladélfia.jpeg';
+import HotLemon from '../../assets/HotLemon.jpeg';
+import HotTataki from '../../assets/HotTataki.jpeg';
+import SashimiSelado from '../../assets/SashimiSelado.jpeg';
+import TemakiCamarão from '../../assets/TemakiCamarão.jpeg';
+import TemakiFiladelfia from '../../assets/TemakiFiladelfia.jpeg';
+import TemakiGrelhado from '../../assets/TemakiGrelhado.jpeg';
+
+
+
 
 export const categories: CategoryTab[] = [
   { id: 'combos', name: 'Combos', icon: '🍱' },
   { id: 'sashimi', name: 'Sashimi', icon: '🍣' },
+  { id: 'uramaki', name: 'Uramaki', icon: '🍣' },
+  { id: 'hot', name: 'Hot', icon: '🍣' },
   { id: 'temaki', name: 'Temaki', icon: '🌯' },
   { id: 'bebidas', name: 'Bebidas', icon: '🥤' }
 ];
@@ -16,7 +46,7 @@ export const sushiItems: SushiItem[] = [
     description: "52 peças variadas com salmão, atum e peixes especiais",
     price: 152.89,
     originalPrice: 158.90,
-    image: 'https://via.placeholder.com/300x200?text=Sushi',
+    image: ComboPremium,
     category: "combos",
     details: [
       "4 sashimi de salmão;",
@@ -29,92 +59,218 @@ export const sushiItems: SushiItem[] = [
       "8 hosomaki pepino e camarão;",
       "6 hot roll (4 doritos, 4 sweet chilli);"
     ],
-    points: 3822
   },
   {
     id: 2,
-    name: "COMBO FAMÍLIA",
-    description: "36 peças ideais para compartilhar",
+    name: "COMBO HOT",
+    description: "25 peças ideais para quem ama o sabor do hot",
     price: 89.90,
-    image: 'https://via.placeholder.com/300x200?text=Sushi',
+    image: ComboHot,
     category: "combos",
     details: [
-      "6 sashimi de salmão;",
-      "8 uramaki califórnia;",
-      "8 uramaki filadélfia;",
-      "6 hot roll especial;",
-      "4 temaki de salmão;",
-      "4 niguiri variados;"
+      "15 Hot filadélfia (5 crispy couve, 5 doritos, 5 sweetchilli);",
+      "5 Uramaki grelhado;",
+      "2 Niguiri salmão selado;",
+      "2 Joe salmão selado;"
     ],
-    points: 2250
   },
   {
     id: 3,
-    name: "COMBO EXECUTIVO",
+    name: "COMBO IMPERIAL",
     description: "20 peças perfeitas para o almoço",
     price: 52.90,
-    image: 'https://via.placeholder.com/300x200?text=Sushi',
+    image: ComboImperial,
     category: "combos",
     details: [
-      "4 sashimi de salmão;",
-      "6 uramaki califórnia;",
-      "4 hot roll;",
-      "2 temaki de salmão;",
-      "4 niguiri variados;"
+      "4 Sashimi salmão - 4 Sashimi salmão trufado;",
+      "2 Joe ágata - 2 Joe salmão - 2 Joe supremo - 2 Sophia 2.0;",
+      "4 Uramaki Sakura - 4 Uramaki Filadéfia Especial;",
+      "4 Uramaki Grelhado Especial - 4 uramaki Ebi (camarão empanado;)",
+      "2 Niguiri salmão - 2 Niguiri mostarda e mel;",
+      "2 Niguiri onion- 4 Hossomaki pepino e camarão"
     ],
-    points: 1322
   },
+  {
+    id: 4,
+    name: "COMBO OSAKA",
+    description: "20 peças perfeitas para a família", 
+    price: 52.90,
+    image: ComboOsaka,
+    category: "combos",
+    details: [
+      "4 uramaki grelhado especial;",
+      "5 Hossomaki pepino e camarão;",
+      "4 hot roll;",
+      "5 Hossomaki kani filadélfia;",
+      "4 Uramaki filadélfia;",
+      "2 Niguiri onion;"
+    ],
+  },
+
+  //HOT
+  {
+    id: 5,
+    name: "TRIO DORITOS",
+    description: "30 peças de hot a sua escolha",
+    price: 45.90,
+    image: TrioHot,
+    category: "hot",
+    details: [
+      "Sabores a sua escolha!"
+    ],
+  },
+  
+  {
+    id: 6,
+    name: "HOT DORITOS",
+    description: "10 peças de hot doritos",
+    price: 45.90,
+    image: HotDoritos,
+    category: "hot",
+    details: [
+      "10 peças de enrolado de arroz, alga, salmão e creamchese empanado e frito, finalizado com creamcheese e Doritos;"
+    ],
+  },
+  
+  {
+    id: 7,
+    name: "HOT FILADÉLFIA",
+    description: "10 peças de hot filadélfia",
+    price: 45.90,
+    image: HotFiladélfia,
+    category: "hot",
+    details: [
+      "10 peças de enrolado de arroz, alga, salmão e creamchese empanado e frito, finalizado com tarê;"
+    ],
+  },
+
+  {
+    id: 8,
+    name: "HOT LEMON",
+    description: "10 peças de hot lemon",
+    price: 45.90,
+    image: HotLemon,
+    category: "hot",
+    details: [
+      "10 peças de hot, cremacheese, fatia fina de limão e tarê."
+    ],
+  },
+
+  {
+    id: 9,
+    name: "HOT TATAKI",
+    description: "10 peças de hot tataki",
+    price: 45.90,
+    image: HotTataki,
+    category: "hot",
+    details: [
+      "10 peças de hot coberto com salmão, finalizadas com tarê e cebolinha."
+    ],
+  },
+
 
   // SASHIMI
   {
-    id: 4,
-    name: "SASHIMI PREMIUM",
-    description: "15 fatias dos melhores peixes frescos",
-    price: 45.90,
-    image: 'https://via.placeholder.com/300x200?text=Sushi',
-    category: "sashimi",
-    details: [
-      "5 fatias de salmão fresco;",
-      "5 fatias de atum;",
-      "3 fatias de peixe branco;",
-      "2 fatias de polvo;"
-    ],
-    points: 1147
-  },
-  {
-    id: 5,
+    id: 10,
     name: "SASHIMI SALMÃO",
-    description: "12 fatias de salmão fresco",
-    price: 32.90,
-    image: 'https://via.placeholder.com/300x200?text=Sushi',
+    description: "8 laminas de salmão fresco",
+    price: 45.90,
+    image: SashimiSalmão,
     category: "sashimi",
     details: [
-      "12 fatias generosas de salmão fresco;",
-      "Acompanha gengibre e wasabi;"
+     "Laminas de salmão fresca",
     ],
-    points: 822
-  },
-  {
-    id: 6,
-    name: "SASHIMI ATUM",
-    description: "10 fatias de atum fresco",
-    price: 38.90,
-    image: 'https://via.placeholder.com/300x200?text=Sushi',
-    category: "sashimi",
-    details: [
-      "10 fatias de atum fresco;",
-      "Acompanha gengibre e wasabi;"
-    ],
-    points: 972
   },
 
+  {
+    id: 11,
+    name: "SASHIMI SALMÃO TRUFADO",
+    description: "12 laminas de salmão fresco com trufas",
+    price: 32.90,
+    image: SashimiTrufado,
+    category: "sashimi",
+    details: [
+      "Laminas de salmão, finalizado com raspas de limão siciliano, flor de sal e azeite de trufas negras."
+    ],
+  },
+
+  {
+    id: 12,
+    name: "SASHIMI SELADO",
+    description: "12 laminas de salmão maçaricado",
+    price: 32.90,
+    image: SashimiSelado,
+    category: "sashimi",
+    details: [
+      "12 Laminas de salmão maçaricado, finalizado com tarê e gergelim torrado."
+    ],
+  },
+
+
+  //URAMAKI
+  {
+    id: 13,
+    name: "URAMAKI CAMARÃO",
+    description: "10 peças de uramaki camarão",
+    price: 32.90,
+    image: UramakiCamarão,
+    category: "uramaki",
+    details: [
+      "10 peças de enrolado de arroz, alga, camarão cozido e creamcheese."
+    ],
+  },
+  {
+    id: 14,
+    name: "URAMAKI FILADÉLFIA ESPECIAL",
+    description: "10 peças de uramaki filadélfia especial",
+    price: 32.90,
+    image: UramakiFiladélfia,
+    category: "uramaki",
+    details: [
+      "10 peças de enrolado de arroz, alga, salmão, creamcheese e gergelim coberto por uma lâmina de salmão."
+    ],
+  },
+  {
+    id: 15,
+    name: "URAMAKI FILADÉLFIA",
+    description: "10 peças de uramaki filadélfia",
+    price: 32.90,
+    image: UramakiFiladélfia2,
+    category: "uramaki",
+    details: [
+      "10 peças de enrolado de arroz, alga, salmão, creamcheese e gergelim;"
+    ],
+  },
+  {
+    id: 16,
+    name: "URAMAKI KEWPIE",
+    description: "10 peças de uramaki kewpie",
+    price: 32.90,
+    image: UramakiKewpie,
+    category: "uramaki",
+    details: [
+      "10 peças de enrolado de arroz, alga, salmão, creamcheese, Maionese Kewpie, cebolinha e gergelim;"
+    ],
+  },
+  {
+    id: 17,
+    name: "URAMAKI SKIN",
+    description: "10 peças de uramaki skin",
+    price: 32.90,
+    image: UramakiSkin,
+    category: "uramaki",
+    details: [
+      "10 peças de enrolado de arroz e pele de salmão frita coberto por uma lâmina de salmão maçaricado, creamcheese, couve e tarê artesanal."
+    ],
+  },
+ 
   // TEMAKI
   {
-    id: 7,
+    id: 18,
     name: "TEMAKI SALMÃO GRELHADO",
     description: "Temaki com salmão grelhado e cream cheese",
     price: 18.50,
-    image: 'https://via.placeholder.com/300x200?text=Sushi',
+    image: TemakiGrelhado,
     category: "temaki",
     details: [
       "Salmão grelhado;",
@@ -122,81 +278,110 @@ export const sushiItems: SushiItem[] = [
       "Pepino japonês;",
       "Cebolinha;"
     ],
-    points: 462
   },
   {
-    id: 8,
+    id: 19,
     name: "TEMAKI CAMARÃO",
-    description: "Temaki crocante com camarão empanado",
+    description: "Cone de alga recheado com arroz, camarão cozido e creamcheese, finalizado com gergelim e cebolinha;",
     price: 16.90,
-    image: 'https://via.placeholder.com/300x200?text=Sushi',
+    image: TemakiCamarão,
     category: "temaki",
     details: [
-      "Camarão empanado;",
+      "Camarão cozido;",
       "Maionese especial;",
-      "Alface americana;",
-      "Tomate cereja;"
+      "Gergelim;",
+      "Tarê;"
     ],
-    points: 422
   },
   {
-    id: 9,
-    name: "TEMAKI SKIN",
-    description: "Temaki com pele de salmão crocante",
+    id: 20,
+    name: "TEMAKI HOT",
+    description: "Cone de alga recheado com arroz, salmão e creamcheese, empanado e frito finalizado com tarê, gergelim e cebolinha;",
     price: 15.90,
-    image: 'https://via.placeholder.com/300x200?text=Sushi',
+    image: TemakiHot,
     category: "temaki",
     details: [
-      "Pele de salmão crocante;",
+      "Temaki frito;",
       "Cream cheese;",
       "Cebolinha;",
       "Gergelim;"
     ],
-    points: 397
+  },
+  {
+    id: 21,
+    name: "TEMAKI FILADÉLFIA",
+    description: "Cone de alga recheado com arroz, salmão e creamcheese, finalizado com gergelim e cebolinha;",
+    price: 15.90,
+    image: TemakiFiladelfia,
+    category: "temaki",
+    details: [
+      "Salmão cru, fresco;",
+      "Cream cheese;",
+      "Cebolinha;",
+      "Gergelim;"
+    ],
   },
 
   // BEBIDAS
   {
-    id: 10,
-    name: "REFRIGERANTE LATA",
-    description: "Coca-Cola, Guaraná, Fanta - 350ml",
+    id: 22,
+    name: "COCA LATA",
+    description: "Coca-Cola Zero - 350ml",
     price: 5.90,
-    image: 'https://via.placeholder.com/300x200?text=Sushi',
+    image: CocaZero,
     category: "bebidas",
     details: [
-      "Coca-Cola;",
-      "Guaraná Antarctica;",
-      "Fanta Laranja;",
-      "Sprite;"
+      "Coca-Cola Zero;",
+      "350ml gelada;"
+      
     ],
-    points: 147
   },
   {
-    id: 11,
+    id: 23,
+    name: "PEPSI BLACK LATA",
+    description: "Pepsi Black - 350ml",
+    price: 5.90,
+    image: PepsiBlack,
+    category: "bebidas",
+    details: [
+      "Pepsi Black;",
+      "350ml gelada;",
+    ],
+  },
+  {
+    id: 24,
     name: "ÁGUA COM GÁS",
     description: "Água mineral com gás - 500ml",
     price: 4.50,
-    image: 'https://via.placeholder.com/300x200?text=Sushi',
+    image: AguaCGás,
     category: "bebidas",
     details: [
       "Água mineral com gás;",
       "500ml gelada;"
     ],
-    points: 112
   },
   {
-    id: 12,
-    name: "SUCO NATURAL",
-    description: "Suco natural de frutas - 400ml",
-    price: 8.90,
-    image: 'https://via.placeholder.com/300x200?text=Sushi',
+    id: 25,
+    name: "ÁGUA SEM GÁS",
+    description: "Água mineral sem gás - 500ml",
+    price: 4.50,
+    image: AguaSGás,
     category: "bebidas",
     details: [
-      "Laranja;",
-      "Limão;",
-      "Maracujá;",
-      "Acerola;"
+      "Água mineral sem gás;",
+      "500ml gelada;"
     ],
-    points: 222
+  },
+  {
+    id: 26,
+    name: "CERVEJA ",
+    description: "Cerveja Corona - 330ml",
+    price: 4.50,
+    image: CervejaCorona,
+    category: "bebidas",
+    details: [
+      "Cerveja Corona;",
+      "330ml gelada;"
+    ],
   }
 ];

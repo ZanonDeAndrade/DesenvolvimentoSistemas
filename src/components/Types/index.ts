@@ -7,7 +7,6 @@ export interface SushiItem {
     image: string;
     category: string;
     details: string[];
-    points?: number;
   }
   
   export interface CategoryTab {
