@@ -391,7 +391,7 @@ const Checkout: React.FC = () => {
           </div>
         </div>
 
-        //Resumo do Pedido
+        {/*Resumo do pedido*/}
         <div className="order-summary">
           <div className="summary-card">
             <h3>Resumo do Pedido</h3>
