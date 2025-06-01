@@ -6,6 +6,7 @@ import Login from './components/Login/Login';
 import Shop from './components/Product/Shop';
 import Cart from './components/Cart/Cart';
 import Checkout from './components/Payment/Checkout';
+import OrderConfirmation from './components/Payment/OrderConfirmation';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
               <Route path="/Shop/Shop" element={<Shop />} />
               <Route path="/Cart/Cart" element={<Cart />} />
               <Route path="/Checkout/Checkout" element={<Checkout />} />
+              <Route path="/OrderConfirmation/OrderConfirmation" element={<OrderConfirmation />} />
             </Routes>
           </div>
         </div>

@@ -30,7 +30,7 @@
   
   .checkout-header h1 {
     margin: 0;
-    color: #333;
+    color: #ffffff;
     font-size: 24px;
   }
   
@@ -137,6 +137,7 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
     margin-bottom: 20px;
+    color: #333;
   }
   
   @media (max-width: 768px) {

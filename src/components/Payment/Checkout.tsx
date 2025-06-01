@@ -95,10 +95,6 @@ const Checkout: React.FC = () => {
       }
     }
 
-    if (paymentMethod.type === 'cash' && !paymentMethod.cashChange) {
-      newErrors.cashChange = 'Valor para troco é obrigatório';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -111,10 +107,6 @@ const Checkout: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Simular chamada de API
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Aqui você faria a chamada real para a API
       const orderData = {
         items: state.items,
         total: state.total + 5, // incluindo taxa de entrega
@@ -129,7 +121,7 @@ const Checkout: React.FC = () => {
       clearCart();
       
       // Navegar para página de confirmação
-      navigate('/order-confirmation', { 
+      navigate('/OrderConfirmation/OrderConfirmation', { 
         state: { 
           orderId: Math.random().toString(36).substr(2, 9).toUpperCase(),
           total: state.total + 5 
@@ -142,6 +134,7 @@ const Checkout: React.FC = () => {
       setIsLoading(false);
     }
   };
+
 
   const formatCardNumber = (value: string) => {
     return value.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim().slice(0, 19);
@@ -163,7 +156,7 @@ const Checkout: React.FC = () => {
       <div className="checkout-header">
         <button 
           className="back-btn"
-          onClick={() => navigate('/cart')}
+          onClick={() => navigate('/Cart/Cart')}
         >
           ← Voltar ao Carrinho
         </button>

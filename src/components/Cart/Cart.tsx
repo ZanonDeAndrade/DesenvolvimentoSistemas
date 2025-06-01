@@ -35,8 +35,7 @@ const Cart: React.FC = () => {
       return;
     }
     
-    // Navegar para a tela de checkout
-    navigate('/checkout');
+    navigate('/checkout/checkout');
   };
 
   const handleContinueShopping = () => {

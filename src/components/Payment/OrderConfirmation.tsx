@@ -15,7 +15,7 @@ const OrderConfirmation: React.FC = () => {
   const { orderId, total } = state || { orderId: 'ERR001', total: 0 };
 
   const handleNewOrder = () => {
-    navigate('/menu');
+    navigate('/Shop/Shop');
   };
 
   const handleTrackOrder = () => {
