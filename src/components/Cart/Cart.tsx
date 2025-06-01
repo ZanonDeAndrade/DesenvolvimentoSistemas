@@ -1,9 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from './CartContext';
 import './Cart.css';
 
 const Cart: React.FC = () => {
   const { state, removeItem, updateQuantity, clearCart } = useCart();
+  const navigate = useNavigate();
 
   const increaseQuantity = (id: number, currentQuantity: number) => {
     updateQuantity(id, currentQuantity + 1);
@@ -33,8 +35,12 @@ const Cart: React.FC = () => {
       return;
     }
     
-    // Aqui você implementaria a lógica de checkout
-    alert(`Finalizando pedido no valor de R$ ${state.total.toFixed(2).replace('.', ',')}`);
+    // Navegar para a tela de checkout
+    navigate('/checkout');
+  };
+
+  const handleContinueShopping = () => {
+    navigate('/shop/shop'); 
   };
 
   if (state.items.length === 0) {
@@ -50,7 +56,7 @@ const Cart: React.FC = () => {
           <p>Adicione alguns itens deliciosos do nosso cardápio!</p>
           <button 
             className="continue-shopping-btn"
-            onClick={() => window.history.back()}
+            onClick={handleContinueShopping}
           >
             Continuar Comprando
           </button>
@@ -156,7 +162,7 @@ const Cart: React.FC = () => {
 
             <button 
               className="continue-shopping-btn"
-              onClick={() => window.history.back()}
+              onClick={handleContinueShopping}
             >
               Continuar Comprando
             </button>
