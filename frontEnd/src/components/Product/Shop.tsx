@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import type { SushiItem } from "../Types/index";
 import { categories, sushiItems } from "./SushiData";
@@ -6,17 +7,58 @@ import { useCart } from "../Cart/CartContext";
 import "./Shop.css";
 import { ShoppingCart, User } from "lucide-react";
 
+
+interface JwtPayload {
+  userId: string;
+  email: string;
+  nome: string;
+  exp: number;
+  iat: number;
+}
+
+
 // Componente principal da loja
 const Shop: React.FC = () => {
   const navigate = useNavigate();
-  const { state, addItem } = useCart();
+  const { addItem } = useCart();
   const [activeCategory, setActiveCategory] = useState("all");
-
-  console.log("Passou nesse carai", { categories, sushiItems, state });
-
   const [selectedItem, setSelectedItem] = useState<SushiItem | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [observations, setObservations] = useState("");
+  const [userName, setUserName] = useState<string>('');
+
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode<JwtPayload>(token);
+        const currentTime = Date.now() / 1000; // Tempo atual em segundos
+
+        // Verifica se o token não expirou
+        if (decodedToken.exp > currentTime) {
+          const fullName = decodedToken.nome; // Obtém o nome completo do token
+          const firstName = fullName.split (' ')[0];
+          setUserName (firstName) // Define o nome do usuário do token
+        } else {
+          // Token expirado, remove e redireciona para o login
+          console.warn('Token JWT expirado. Redirecionando para o login.');
+          localStorage.removeItem('token');
+          navigate('/Login'); // Ajuste para a rota correta da sua página de login
+        }
+      } catch (error) {
+        // Erro ao decodificar o token (token malformado, etc.)
+        console.error('Erro ao decodificar token JWT:', error);
+        localStorage.removeItem('token'); // Remove token inválido
+        navigate('/Login'); // Redireciona para o login
+      }
+    } else {
+      // Não há token no localStorage, o usuário não está logado
+      console.log('Nenhum token encontrado. Redirecionando para o login.');
+      navigate('/Login'); // Redireciona para a página de login
+    }
+  }, [navigate]);
+
 
   const filteredItems =
     activeCategory === "all"
@@ -79,7 +121,7 @@ const Shop: React.FC = () => {
   return (
     <div className="shop-container">
       <div className="shop-header">
-        <h1>BEM VINDO ARTHUR</h1>
+        <h1>BEM VINDO {userName ? userName.toUpperCase() : 'CLIENTE'}</h1>
         <div className="header-actions">
           <button className="filter-btn">
             <User size={24} />

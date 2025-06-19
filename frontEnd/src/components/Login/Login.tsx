@@ -28,11 +28,11 @@ const Login = () => {
     setErro('');
 
     try {
-      const response = await axios.post('http://localhost:5000/api/login', { email, senha });
+      const response = await axios.post('http://localhost:5000/auth/login', { email, senha });
       const { token } = response.data;
 
-      localStorage.setItem('token', token); // Salva o token
-      navigate('/Shop/Shop'); // Redireciona após sucesso
+      localStorage.setItem('token', token); 
+      navigate('/Shop/Shop'); 
     } catch (err) {
       setErro('Email ou senha inválidos');
     }
