@@ -1,12 +1,26 @@
-import React, { useState, useEffect } from "react";
+// frontend/src/components/Shop.tsx
+import React, { useState, useEffect, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import type { SushiItem } from "../Types/index";
-import { categories, sushiItems } from "./SushiData";
+import type { Product, CategoryTab } from "../Types/index"; // Importe Product do seu arquivo de tipos global
 import { useCart } from "../Cart/CartContext";
 import "./Shop.css";
 import { ShoppingCart, User } from "lucide-react";
 
+// Importar as funções de API
+import { getProducts, getBebidas, getCombos, getSushiItems } from "../../services/api"; // Ajuste o caminho conforme necessário
+
+// Defina as categorias aqui, ou importe de um arquivo separado se elas forem estáticas
+// Exemplo:
+const categories: CategoryTab[] = [
+  { id: "all", name: "Todos", icon: "🍱" },
+  { id: "combos", name: "Combos", icon: "🍣" },
+  { id: "sashimi", name: "Sashimi", icon: "🐟" },
+  { id: "uramaki", name: "Uramaki", icon: "🍙" },
+  { id: "hot", name: "Hot", icon: "🔥" },
+  { id: "temaki", name: "Temaki", icon: "🌯" },
+  { id: "bebidas", name: "Bebidas", icon: "🥤" },
+];
 
 interface JwtPayload {
   userId: string;
@@ -16,56 +30,95 @@ interface JwtPayload {
   iat: number;
 }
 
-
 // Componente principal da loja
 const Shop: React.FC = () => {
   const navigate = useNavigate();
   const { addItem } = useCart();
   const [activeCategory, setActiveCategory] = useState("all");
-  const [selectedItem, setSelectedItem] = useState<SushiItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [observations, setObservations] = useState("");
   const [userName, setUserName] = useState<string>('');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
+  // --- Adicione a URL base do seu backend aqui ---
+  const API_BASE_URL = 'http://localhost:5000'; // OU a URL do seu backend em produção
+  // ---------------------------------------------
 
+  // Lógica de verificação do token (mantida igual)
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const decodedToken = jwtDecode<JwtPayload>(token);
-        const currentTime = Date.now() / 1000; // Tempo atual em segundos
+        const currentTime = Date.now() / 1000;
 
-        // Verifica se o token não expirou
         if (decodedToken.exp > currentTime) {
-          const fullName = decodedToken.nome; // Obtém o nome completo do token
-          const firstName = fullName.split (' ')[0];
-          setUserName (firstName) // Define o nome do usuário do token
+          const fullName = decodedToken.nome;
+          const firstName = fullName.split(' ')[0];
+          setUserName(firstName);
         } else {
-          // Token expirado, remove e redireciona para o login
           console.warn('Token JWT expirado. Redirecionando para o login.');
           localStorage.removeItem('token');
-          navigate('/Login'); // Ajuste para a rota correta da sua página de login
+          navigate('/Login');
         }
       } catch (error) {
-        // Erro ao decodificar o token (token malformado, etc.)
         console.error('Erro ao decodificar token JWT:', error);
-        localStorage.removeItem('token'); // Remove token inválido
-        navigate('/Login'); // Redireciona para o login
+        localStorage.removeItem('token');
+        navigate('/Login');
       }
     } else {
-      // Não há token no localStorage, o usuário não está logado
       console.log('Nenhum token encontrado. Redirecionando para o login.');
-      navigate('/Login'); // Redireciona para a página de login
+      navigate('/Login');
     }
   }, [navigate]);
 
+  // Função para buscar produtos com base na categoria ativa (mantida como antes)
+  const fetchProductsByCategory = useCallback(async (category: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      let data: Product[] = [];
+      switch (category) {
+        case 'all':
+          data = await getProducts();
+          break;
+        case 'combos':
+          data = await getCombos();
+          break;
+        case 'bebidas':
+          data = await getBebidas();
+          break;
+        case 'sashimi':
+        case 'uramaki':
+        case 'hot':
+        case 'temaki':
+          const allSushiItems = await getSushiItems();
+          data = allSushiItems.filter(item => item.category === category);
+          break;
+        default:
+          data = await getProducts();
+          break;
+      }
+      setProducts(data);
+    } catch (err) {
+      console.error(`Erro ao buscar produtos para a categoria ${category}:`, err);
+      setError('Não foi possível carregar os produtos.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const filteredItems =
-    activeCategory === "all"
-      ? sushiItems
-      : sushiItems.filter((item) => item.category === activeCategory);
+  useEffect(() => {
+    fetchProductsByCategory(activeCategory);
+  }, [activeCategory, fetchProductsByCategory]);
 
-  const openModal = (item: SushiItem) => {
+
+  const filteredItems = products;
+
+  const openModal = (item: Product) => {
     setSelectedItem(item);
     setQuantity(1);
     setObservations("");
@@ -99,7 +152,6 @@ const Shop: React.FC = () => {
     if (selectedItem) {
       addItem(selectedItem, quantity, observations.trim() || undefined);
 
-      //Exibe notificação quando um item é adicionado ao carrinho
       const notification = document.createElement("div");
       notification.className = "add-to-cart-notification";
       notification.textContent = `${selectedItem.name} adicionado ao carrinho!`;
@@ -113,10 +165,25 @@ const Shop: React.FC = () => {
     }
   };
 
-  // Função para redirecionar para a página do carrinho
   const goToCart = () => {
     navigate("/Cart/Cart");
   };
+
+  if (loading) {
+    return (
+      <div className="shop-container">
+        <p>Carregando produtos...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="shop-container">
+        <p className="error-message">Erro: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="shop-container">
@@ -133,7 +200,6 @@ const Shop: React.FC = () => {
         </div>
       </div>
 
-      {/*Abas de Categorias*/}
       <div className="categories-tabs">
         {categories.map((category) => (
           <button
@@ -149,33 +215,40 @@ const Shop: React.FC = () => {
         ))}
       </div>
 
-      {/*Items de uma categoria, importados do SushiData.ts*/}
       <div className="items-grid">
-        {filteredItems.map((item) => (
-          <div
-            key={item.id}
-            className="item-card"
-            onClick={() => openModal(item)}
-          >
-            <div className="item-image">
-              <img src={item.image} alt={item.name} />
-            </div>
-            <div className="item-info">
-              <h3>{item.name}</h3>
-              <p>{item.description}</p>
-              <div className="price-container">
-                {item.originalPrice && (
-                  <span className="original-price">
-                    R$ {item.originalPrice.toFixed(2).replace(".", ",")}
+        {filteredItems.length === 0 && !loading && !error ? (
+          <p>Nenhum produto encontrado para a categoria selecionada.</p>
+        ) : (
+          filteredItems.map((item) => (
+            <div
+              key={item._id}
+              className="item-card"
+              onClick={() => openModal(item)}
+            >
+              <div className="item-image">
+                {/* --- MUDANÇA CRUCIAL AQUI --- */}
+                <img src={`${API_BASE_URL}/${item.image}`} alt={item.name} 
+                loading="lazy"/>
+                
+                {/* ---------------------------- */}
+              </div>
+              <div className="item-info">
+                <h3>{item.name}</h3>
+                <p>{item.description}</p>
+                <div className="price-container">
+                  {item.originalPrice && (
+                    <span className="original-price">
+                      R$ {item.originalPrice.toFixed(2).replace(".", ",")}
+                    </span>
+                  )}
+                  <span className="item-price">
+                    R$ {item.price.toFixed(2).replace(".", ",")}
                   </span>
-                )}
-                <span className="item-price">
-                  R$ {item.price.toFixed(2).replace(".", ",")}
-                </span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       {/*Modal para exibir detalhes do item selecionado*/}
@@ -192,16 +265,25 @@ const Shop: React.FC = () => {
 
             <div className="modal-body">
               <div className="product-image">
-                <img src={selectedItem.image} alt={selectedItem.name} />
+                {/* --- MUDANÇA CRUCIAL AQUI TAMBÉM --- */}
+                <img src={`${API_BASE_URL}/${selectedItem.image}`} alt={selectedItem.name} 
+                loading="lazy"/>
+                {/* ---------------------------------- */}
               </div>
 
               <div className="product-details">
                 <h3>{selectedItem.name}</h3>
-                <ul className="details-list">
-                  {selectedItem.details.map((detail, index) => (
-                    <li key={index}>{detail}</li>
-                  ))}
-                </ul>
+                {selectedItem.details && selectedItem.details.length > 0 && (
+                    <ul className="details-list">
+                      {selectedItem.details.map((detail, index) => (
+                        <li key={index}>{detail}</li>
+                      ))}
+                    </ul>
+                )}
+                {(!selectedItem.details || selectedItem.details.length === 0) && selectedItem.volume && (
+                    <p>Volume: {selectedItem.volume}</p>
+                )}
+
 
                 <div className="price-section">
                   {selectedItem.originalPrice && (

@@ -1,4 +1,4 @@
-// backEnd/src/data.ts
+// backend/src/data.ts
 import type { SushiItemData } from "./types";
 
 
@@ -10,7 +10,7 @@ export const sushiItems: SushiItemData[] = [
     description: "52 peças variadas com salmão, atum e peixes especiais",
     price: 152.89,
     originalPrice: 158.9,
-    image: "assets/ComboPremium.jpeg", // Caminho como string
+    image: "backend-assets/ComboPremium.jpeg", // <-- MUDANÇA AQUI
     category: "combos",
     details: [
       "4 sashimi de salmão;",
@@ -29,7 +29,7 @@ export const sushiItems: SushiItemData[] = [
     name: "COMBO HOT",
     description: "25 peças ideais para quem ama o sabor do hot",
     price: 89.9,
-    image: "assets/ComboHot.jpeg",
+    image: "backend-assets/ComboHot.jpeg", // <-- MUDANÇA AQUI
     category: "combos",
     details: [
       "15 Hot filadélfia (5 crispy couve, 5 doritos, 5 sweetchilli);",
@@ -43,7 +43,7 @@ export const sushiItems: SushiItemData[] = [
     name: "COMBO IMPERIAL",
     description: "20 peças perfeitas para o almoço",
     price: 52.9,
-    image: "assets/ComboImperial.jpeg",
+    image: "backend-assets/ComboImperial.jpeg", // <-- MUDANÇA AQUI
     category: "combos",
     details: [
       "4 Sashimi salmão - 4 Sashimi salmão trufado;",
@@ -59,7 +59,7 @@ export const sushiItems: SushiItemData[] = [
     name: "COMBO OSAKA",
     description: "20 peças perfeitas para a família",
     price: 52.9,
-    image: "assets/ComboOsaka.jpeg",
+    image: "backend-assets/ComboOsaka.jpeg", // <-- MUDANÇA AQUI
     category: "combos",
     details: [
       "4 uramaki grelhado especial;",
@@ -77,7 +77,7 @@ export const sushiItems: SushiItemData[] = [
     name: "TRIO DORITOS",
     description: "30 peças de hot a sua escolha",
     price: 45.9,
-    image: "assets/TrioHot.jpeg",
+    image: "backend-assets/TrioHot.jpeg", // <-- MUDANÇA AQUI
     category: "hot",
     details: ["Sabores a sua escolha!"],
   },
@@ -87,7 +87,7 @@ export const sushiItems: SushiItemData[] = [
     name: "HOT DORITOS",
     description: "10 peças de hot doritos",
     price: 45.9,
-    image: "assets/HotDoritos.jpeg",
+    image: "backend-assets/HotDoritos.jpeg", // <-- MUDANÇA AQUI
     category: "hot",
     details: [
       "10 peças de enrolado de arroz, alga, salmão e creamchese empanado e frito, finalizado com creamcheese e Doritos;",
@@ -99,7 +99,7 @@ export const sushiItems: SushiItemData[] = [
     name: "HOT FILADÉLFIA",
     description: "10 peças de hot filadélfia",
     price: 45.9,
-    image: "assets/HotFiladelfia.jpeg",
+    image: "backend-assets/HotFiladelfia.jpeg", // <-- MUDANÇA AQUI
     category: "hot",
     details: [
       "10 peças de enrolado de arroz, alga, salmão e creamchese empanado e frito, finalizado com tarê;",
@@ -111,7 +111,7 @@ export const sushiItems: SushiItemData[] = [
     name: "HOT LEMON",
     description: "10 peças de hot lemon",
     price: 45.9,
-    image: "assets/HotLemon.jpeg",
+    image: "backend-assets/HotLemon.jpeg", // <-- MUDANÇA AQUI
     category: "hot",
     details: ["10 peças de hot, cremacheese, fatia fina de limão e tarê."],
   },
@@ -121,7 +121,7 @@ export const sushiItems: SushiItemData[] = [
     name: "HOT TATAKI",
     description: "10 peças de hot tataki",
     price: 45.9,
-    image: "assets/HotTataki.jpeg",
+    image: "backend-assets/HotTataki.jpeg", // <-- MUDANÇA AQUI
     category: "hot",
     details: [
       "10 peças de hot coberto com salmão, finalizadas com tarê e cebolinha.",
@@ -134,7 +134,7 @@ export const sushiItems: SushiItemData[] = [
     name: "SASHIMI SALMÃO",
     description: "8 laminas de salmão fresco",
     price: 45.9,
-    image: "assets/SashimiSalmao.jpeg",
+    image: "backend-assets/SashimiSalmao.jpeg", // <-- MUDANÇA AQUI
     category: "sashimi",
     details: ["Laminas de salmão fresca"],
   },
@@ -144,7 +144,7 @@ export const sushiItems: SushiItemData[] = [
     name: "SASHIMI SALMÃO TRUFADO",
     description: "12 laminas de salmão fresco com trufas",
     price: 32.9,
-    image: "assets/SashimiTrufado.jpeg",
+    image: "backend-assets/SashimiTrufado.jpeg", // <-- MUDANÇA AQUI
     category: "sashimi",
     details: [
       "Laminas de salmão, finalizado com raspas de limão siciliano, flor de sal e azeite de trufas negras.",
@@ -156,7 +156,7 @@ export const sushiItems: SushiItemData[] = [
     name: "SASHIMI SELADO",
     description: "12 laminas de salmão maçaricado",
     price: 32.9,
-    image: "assets/SashimiSelado.jpeg",
+    image: "backend-assets/SashimiSelado.jpeg", // <-- MUDANÇA AQUI
     category: "sashimi",
     details: [
       "12 Laminas de salmão maçaricado, finalizado com tarê e gergelim torrado.",
@@ -169,7 +169,7 @@ export const sushiItems: SushiItemData[] = [
     name: "URAMAKI CAMARÃO",
     description: "10 peças de uramaki camarão",
     price: 32.9,
-    image: "assets/UramakiCamarao.jpeg",
+    image: "backend-assets/UramakiCamarao.jpeg", // <-- MUDANÇA AQUI
     category: "uramaki",
     details: [
       "10 peças de enrolado de arroz, alga, camarão cozido e creamcheese.",
@@ -180,7 +180,7 @@ export const sushiItems: SushiItemData[] = [
     name: "URAMAKI FILADÉLFIA ESPECIAL",
     description: "10 peças de uramaki filadélfia especial",
     price: 32.9,
-    image: "assets/UramakiFiladelfia.jpeg",
+    image: "backend-assets/UramakiFiladelfia.jpeg", // <-- MUDANÇA AQUI
     category: "uramaki",
     details: [
       "10 peças de enrolado de arroz, alga, salmão, creamcheese e gergelim coberto por uma lâmina de salmão.",
@@ -191,7 +191,7 @@ export const sushiItems: SushiItemData[] = [
     name: "URAMAKI FILADÉLFIA",
     description: "10 peças de uramaki filadélfia",
     price: 32.9,
-    image: "assets/UramakiFiladelfia2.jpeg",
+    image: "backend-assets/UramakiFiladelfia2.jpeg", // <-- MUDANÇA AQUI
     category: "uramaki",
     details: [
       "10 peças de enrolado de arroz, alga, salmão, creamcheese e gergelim;",
@@ -202,7 +202,7 @@ export const sushiItems: SushiItemData[] = [
     name: "URAMAKI KEWPIE",
     description: "10 peças de uramaki kewpie",
     price: 32.9,
-    image: "assets/UramakiKewpie.jpeg",
+    image: "backend-assets/UramakiKewpie.jpeg", // <-- MUDANÇA AQUI
     category: "uramaki",
     details: [
       "10 peças de enrolado de arroz, alga, salmão, creamcheese, Maionese Kewpie, cebolinha e gergelim;",
@@ -213,7 +213,7 @@ export const sushiItems: SushiItemData[] = [
     name: "URAMAKI SKIN",
     description: "10 peças de uramaki skin",
     price: 32.9,
-    image: "assets/UramakiSkin.jpeg",
+    image: "backend-assets/UramakiSkin.jpeg", // <-- MUDANÇA AQUI
     category: "uramaki",
     details: [
       "10 peças de enrolado de arroz e pele de salmão frita coberto por uma lâmina de salmão maçaricado, creamcheese, couve e tarê artesanal.",
@@ -226,7 +226,7 @@ export const sushiItems: SushiItemData[] = [
     name: "TEMAKI SALMÃO GRELHADO",
     description: "Temaki com salmão grelhado e cream cheese",
     price: 18.5,
-    image: "assets/TemakiGrelhado.jpeg",
+    image: "backend-assets/TemakiGrelhado.jpeg", // <-- MUDANÇA AQUI
     category: "temaki",
     details: [
       "Salmão grelhado;",
@@ -241,7 +241,7 @@ export const sushiItems: SushiItemData[] = [
     description:
       "Cone de alga recheado com arroz, camarão cozido e creamcheese, finalizado com gergelim e cebolinha;",
     price: 16.9,
-    image: "assets/TemakiCamarao.jpeg",
+    image: "backend-assets/TemakiCamarao.jpeg", // <-- MUDANÇA AQUI
     category: "temaki",
     details: ["Camarão cozido;", "Maionese especial;", "Gergelim;", "Tarê;"],
   },
@@ -251,7 +251,7 @@ export const sushiItems: SushiItemData[] = [
     description:
       "Cone de alga recheado com arroz, salmão e creamcheese, empanado e frito finalizado com tarê, gergelim e cebolinha;",
     price: 15.9,
-    image: "assets/TemakiHot.jpeg",
+    image: "backend-assets/TemakiHot.jpeg", // <-- MUDANÇA AQUI
     category: "temaki",
     details: ["Temaki frito;", "Cream cheese;", "Cebolinha;", "Gergelim;"],
   },
@@ -261,7 +261,7 @@ export const sushiItems: SushiItemData[] = [
     description:
       "Cone de alga recheado com arroz, salmão e creamcheese, finalizado com gergelim e cebolinha;",
     price: 15.9,
-    image: "assets/TemakiFiladelfia.jpeg",
+    image: "backend-assets/TemakiFiladelfia.jpeg", // <-- MUDANÇA AQUI
     category: "temaki",
     details: [
       "Salmão cru, fresco;",
@@ -277,7 +277,7 @@ export const sushiItems: SushiItemData[] = [
     name: "COCA LATA",
     description: "Coca-Cola Zero - 350ml",
     price: 5.9,
-    image: "assets/CocaZero.jpeg",
+    image: "backend-assets/CocaZero.jpeg", // <-- MUDANÇA AQUI
     category: "bebidas",
     details: ["Coca-Cola Zero;", "350ml gelada;"],
   },
@@ -286,7 +286,7 @@ export const sushiItems: SushiItemData[] = [
     name: "PEPSI BLACK LATA",
     description: "Pepsi Black - 350ml",
     price: 5.9,
-    image: "assets/PepsiBlack.jpeg",
+    image: "backend-assets/PepsiBlack.jpeg", // <-- MUDANÇA AQUI
     category: "bebidas",
     details: ["Pepsi Black;", "350ml gelada;"],
   },
@@ -295,7 +295,7 @@ export const sushiItems: SushiItemData[] = [
     name: "ÁGUA COM GÁS",
     description: "Água mineral com gás - 500ml",
     price: 4.5,
-    image: "assets/AguaCGas.jpeg",
+    image: "backend-assets/AguaCGas.jpeg", // <-- MUDANÇA AQUI
     category: "bebidas",
     details: ["Água mineral com gás;", "500ml gelada;"],
   },
@@ -304,7 +304,7 @@ export const sushiItems: SushiItemData[] = [
     name: "ÁGUA SEM GÁS",
     description: "Água mineral sem gás - 500ml",
     price: 4.5,
-    image: "assets/AguaSGas.jpeg",
+    image: "backend-assets/AguaSGas.jpeg", // <-- MUDANÇA AQUI
     category: "bebidas",
     details: ["Água mineral sem gás;", "500ml gelada;"],
   },
@@ -313,7 +313,7 @@ export const sushiItems: SushiItemData[] = [
     name: "CERVEJA ",
     description: "Cerveja Corona - 330ml",
     price: 4.5,
-    image: "assets/CervejaCorona.jpeg",
+    image: "backend-assets/CervejaCorona.jpeg", // <-- MUDANÇA AQUI
     category: "bebidas",
     details: ["Cerveja Corona;", "330ml gelada;"],
   },

@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import path from 'path'; // <--- IMPORTE O MÓDULO PATH
 import authRoutes from './routes/login';
 import registerRoutes from './routes/register';
 import productRoutes from './routes/products';
@@ -18,6 +19,16 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+// --- ADICIONE ESTAS DUAS LINHAS PARA SERVIR OS ASSETS ESTÁTICOS DO BACKEND ---
+// Cria um caminho absoluto para a pasta 'assets' dentro de 'src'
+const assetsPath = path.join(__dirname, 'assets');
+console.log(`Servindo assets estáticos de: ${assetsPath}`); // Para debug
+// Configura o Express para servir arquivos estáticos de 'assetsPath' sob o prefixo '/backend-assets'
+app.use('/backend-assets', express.static(assetsPath, {
+  maxAge: '1y'  // Define o cache para 1 ano, você pode ajustar conforme necessário
+}));
+// -------------------------------------------------------------------------
 
 app.get('/', (req, res) => {
     res.send('API de Autenticação e Produtos em Funcionamento!');

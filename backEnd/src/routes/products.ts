@@ -3,7 +3,7 @@ import { Router } from 'express';
 import Combo from '../modules/Combo';
 import Bebida from '../modules/Bebida';
 import SushiItem from '../modules/SushiItem';
-import { sushiItems as initialSushiItems } from '../data';
+import { sushiItems as initialSushiItems } from '../data'; // <--- Imports data.ts
 import { SushiItemData } from '../types';
 
 const router = Router();
@@ -18,7 +18,7 @@ router.post('/populate', async (req, res) => {
         console.log('Coleções de produtos limpas.');
 
         let insertedCount = 0;
-        for (const item of initialSushiItems as SushiItemData[]) {
+        for (const item of initialSushiItems as SushiItemData[]) { // <--- Uses initialSushiItems from data.ts
             switch (item.category) {
                 case 'combos':
                     await Combo.create(item);
