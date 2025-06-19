@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import type { Product, CategoryTab } from "../Types/index"; // Importe Product do seu arquivo de tipos global
+import type { Product, CategoryTab, SushiItemProduct } from "../Types/index"; // Importe Product do seu arquivo de tipos global
 import { useCart } from "../Cart/CartContext";
 import "./Shop.css";
 import { ShoppingCart, User } from "lucide-react";
@@ -88,9 +88,6 @@ const Shop: React.FC = () => {
         case 'combos':
           data = await getCombos();
           break;
-        case 'bebidas':
-          data = await getBebidas();
-          break;
         case 'sashimi':
         case 'uramaki':
         case 'hot':
@@ -100,6 +97,9 @@ const Shop: React.FC = () => {
           break;
         default:
           data = await getProducts();
+          break;
+        case 'bebidas':
+          data = await getBebidas();
           break;
       }
       setProducts(data);
@@ -150,7 +150,7 @@ const Shop: React.FC = () => {
 
   const addToCart = () => {
     if (selectedItem) {
-      addItem(selectedItem, quantity, observations.trim() || undefined);
+      addItem(selectedItem as SushiItemProduct, quantity, observations.trim() || undefined);
 
       const notification = document.createElement("div");
       notification.className = "add-to-cart-notification";
@@ -159,7 +159,7 @@ const Shop: React.FC = () => {
 
       setTimeout(() => {
         notification.remove();
-      }, 3000);
+      }, 2000);
 
       closeModal();
     }

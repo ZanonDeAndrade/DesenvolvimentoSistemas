@@ -25,6 +25,17 @@ export interface SushiItemData {
     category: 'combos'; // Definir o tipo literal para a categoria
     details?: string[];
   }
+
+
+  export interface ISushiItem extends Document {
+    id: number;
+    name: string;
+    description?: string;
+    price: number;
+    image: string;
+    category: 'sashimi' | 'uramaki' | 'hot' | 'temaki'; // Union Types para categorias específicas
+    details?: string[];
+  }
   
   export interface IBebida extends Document {
     id: number;
@@ -35,20 +46,8 @@ export interface SushiItemData {
     category: 'bebidas';
     volume?: string; // Campo específico para bebidas
   }
-  
-  export interface ISushiItem extends Document {
-    id: number;
-    name: string;
-    description?: string;
-    price: number;
-    image: string;
-    category: 'sashimi' | 'uramaki' | 'hot' | 'temaki'; // Union Types para categorias específicas
-    details?: string[];
-  }
 
 
-
-  //Tipagem para o arquivo SushiData
 
 export interface SushiItem {
     id: number;

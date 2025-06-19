@@ -103,7 +103,7 @@ const CreateAccount = () => {
 
         setTimeout(() => {
           navigate('/Shop/Shop');
-        }, 2000); // Redireciona após 2 segundos
+        }, 1000); // Redireciona após 1 segundos
       }
       
     } catch (err: any) {

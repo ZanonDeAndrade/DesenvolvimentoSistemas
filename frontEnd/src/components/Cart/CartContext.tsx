@@ -1,10 +1,10 @@
 import { createContext, useContext, useReducer } from 'react';
 import type { ReactNode } from 'react';
-import type { SushiItem } from '../Types/index';
+import type { SushiItemProduct } from '../Types/index';
 
 
 // Definição dos tipos
-export interface CartItem extends SushiItem {
+export interface CartItem extends SushiItemProduct {
   quantity: number;
   observations?: string;
 }
@@ -16,7 +16,7 @@ interface CartState {
 }
 
 type CartAction =
-  | { type: 'ADD_ITEM'; payload: { item: SushiItem; quantity: number; observations?: string } }
+  | { type: 'ADD_ITEM'; payload: { item: SushiItemProduct; quantity: number; observations?: string } }
   | { type: 'REMOVE_ITEM'; payload: { id: number } }
   | { type: 'UPDATE_QUANTITY'; payload: { id: number; quantity: number } }
   | { type: 'CLEAR_CART' };
@@ -24,7 +24,7 @@ type CartAction =
 
 interface CartContextType {
   state: CartState;
-  addItem: (item: SushiItem, quantity: number, observations?: string) => void;
+  addItem: (item: SushiItemProduct, quantity: number, observations?: string) => void;
   removeItem: (id: number) => void;
   updateQuantity: (id: number, quantity: number) => void;
   clearCart: () => void;
@@ -135,7 +135,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
   // Adiciona um item ao carrinho
-  const addItem = (item: SushiItem, quantity: number, observations?: string) => {
+  const addItem = (item: SushiItemProduct, quantity: number, observations?: string) => {
     dispatch({ type: 'ADD_ITEM', payload: { item, quantity, observations } });
   };
 

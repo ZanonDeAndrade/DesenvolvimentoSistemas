@@ -3,6 +3,8 @@ import { useCart } from './CartContext';
 import './Cart.css';
 
 
+const API_BASE_URL = 'http://localhost:5000';
+
 const Cart: React.FC = () => {
   const { state, removeItem, updateQuantity, clearCart } = useCart();
   const navigate = useNavigate();
@@ -86,8 +88,9 @@ const Cart: React.FC = () => {
         <div className="cart-items">
           {state.items.map((item, index) => (
             <div key={`${item.id}-${index}`} className="cart-item">
-              <div className="cart-item-image">
-                <img src={item.image} alt={item.name} />
+              <div className="item-image">
+                <img src={`${API_BASE_URL}/${item.image}`} alt={item.name} 
+                loading="lazy"/>
               </div>
 
               <div className="cart-item-details">

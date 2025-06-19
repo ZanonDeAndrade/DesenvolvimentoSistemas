@@ -5,6 +5,19 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   senha: { type: String, required: true },
   telefone: { type: String, required: true },
+
+  endereco: {
+    type: { 
+      rua: { type: String, required: true },
+      numero: { type: String, required: true },
+      complemento: { type: String, required: false }, 
+      bairro: { type: String, required: true },
+      cidade: { type: String, required: true },
+      estado: { type: String, required: true },
+      cep: { type: String, required: true },
+    },
+    required: true 
+  },
 });
 
 export const User = mongoose.model('User', userSchema);
