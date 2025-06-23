@@ -1,48 +1,40 @@
 // frontend/src/types/index.ts (ou types.ts)
 
 // ===============================================
-// Interfaces de Produto (Existente, com pequenas melhorias)
+// Interfaces de Produto
 // ===============================================
 
-// Usamos 'Product' como um tipo mais genérico para os itens retornados do backend
 export interface Product {
-  _id: string; // Adicionado: o ID do MongoDB
-  id?: number;  // Tornando opcional, se o _id é o principal e o id original é mais para legacy/dados iniciais
+  _id: string; // O ID do MongoDB
+  id?: number;  // Opcional, se o _id é o principal
   name: string;
-  description?: string; // Tornando opcional, pois nem todos podem ter ou vir vazio
+  description?: string;
   price: number;
-  originalPrice?: number; // Opcional, se houver promoção
-  image: string; // Caminho/URL da imagem
-  // A categoria agora tem uma união de literais que são as categorias reais
-  category: 'combos' | 'sashimi' | 'uramaki' | 'hot' | 'temaki' | 'bebidas'; // Tipagem mais estrita
-  details?: string[]; // Opcional, comum em combos e alguns sushis
-  volume?: string;    // Opcional, específico para bebidas
-  // Você pode adicionar outros campos que Mongoose pode incluir, como createdAt e updatedAt:
-  // createdAt?: string; // Se você tiver timestamps habilitados no Mongoose
-  // updatedAt?: string;
+  originalPrice?: number;
+  image: string;
+  category: 'combos' | 'sashimi' | 'uramaki' | 'hot' | 'temaki' | 'bebidas';
+  details?: string[];
+  volume?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-// Interfaces mais específicas (opcional, mas bom para clareza)
 export interface ComboProduct extends Product {
   category: 'combos';
-  originalPrice?: number; // Permanece opcional para flexibilidade
-  details: string[]; // Combos geralmente sempre têm detalhes
+  details: string[];
 }
 
 export interface BebidaProduct extends Product {
   category: 'bebidas';
-  volume: string; // Bebidas sempre têm volume
-  details?: string[]; // Pode ter, mas não é obrigatório
+  volume: string;
 }
 
 export interface SushiItemProduct extends Product {
-  // A categoria aqui está correta para os tipos específicos de sushi
   category: 'sashimi' | 'uramaki' | 'hot' | 'temaki';
-  details: string[]; // Itens de sushi geralmente têm detalhes (ingredientes, peças)
+  details: string[];
 }
 
-
-// Sua interface para as abas de categoria (provavelmente permanece a mesma)
+// Sua interface para as abas de categoria (se usada)
 export interface CategoryTab {
   id: string;
   name: string;
@@ -50,43 +42,32 @@ export interface CategoryTab {
 }
 
 // ===============================================
-// Novas Interfaces para Endereço e Usuário
+// Interfaces de Endereço e Usuário
 // ===============================================
 
-/**
- * Interface para o subdocumento de endereço do usuário.
- * Os campos são opcionais aqui se eles forem opcionalmente preenchidos no frontend,
- * mas devem refletir a tipagem e os nomes dos campos do seu Schema no backend.
- *
- * Ex: `rua` no frontend corresponde a `rua` no backend.
- */
 export interface Address {
   rua: string;
   numero: string;
-  complemento?: string; // Opcional no frontend e no backend
+  complemento?: string;
   bairro: string;
   cidade: string;
-  estado: string; // Adicionado para corresponder ao backend
+  estado: string;
   cep: string;
 }
 
-/**
- * Interface para o modelo de usuário.
- * Os campos devem refletir a tipagem e os nomes dos campos do seu Schema no backend.
- *
- * Nota: 'senha' geralmente não é incluída ao enviar dados do backend para o frontend por segurança,
- * mas pode ser presente em requisições de login/registro.
- */
 export interface User {
-  _id: string; // ID gerado pelo MongoDB
+  _id: string;
   nome: string;
   email: string;
   telefone: string;
-  endereco?: Address; // O subdocumento de endereço, opcional (se no seu schema for `required: false` para o objeto `endereco`)
-  // createdAt?: string; // Opcional: Se seu schema Mongoose tiver timestamps
-  // updatedAt?: string; // Opcional: Se seu schema Mongoose tiver timestamps
+  endereco?: Address;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
+// ===============================================
+// Interfaces de Pagamento
+// ===============================================
 
 export interface PaymentMethod {
   type: 'credit' | 'debit' | 'pix' | 'cash';
@@ -95,4 +76,69 @@ export interface PaymentMethod {
   cardExpiry?: string;
   cardCVV?: string;
   cashChange?: number;
+}
+
+// ===============================================
+// Interfaces de Integração com ViaCEP
+// ===============================================
+
+export interface ViaCepAddress {
+  cep: string;
+  logradouro: string;
+  complemento: string;
+  bairro: string;
+  localidade: string; // Cidade
+  uf: string;        // Estado
+  ibge: string;
+  gia: string;
+  ddd: string;
+  siafi: string;
+  erro?: boolean; // A ViaCEP retorna esta propriedade se o CEP não for encontrado
+}
+
+// ===============================================
+// NOVAS INTERFACES (AS QUE ESTAVAM FALTANDO NO SEU ARQUIVO)
+// ===============================================
+
+/**
+ * Interface para um item dentro do carrinho no frontend.
+ * Corresponde aos dados do produto mais a quantidade.
+ */
+export interface CartItem {
+  id: string; // O _id do produto do MongoDB
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+}
+
+/**
+ * Interface para um item dentro de um pedido (no backend e frontend).
+ * Reflete o que é salvo no modelo Order do Mongoose.
+ */
+export interface IOrderItem {
+  productId: string; // Será o _id do produto no MongoDB
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+}
+
+/**
+ * Interface principal para o modelo de Pedido.
+ * Reflete o esquema do Mongoose para Pedidos.
+ */
+export interface IOrder {
+  _id: string; // ID do pedido no MongoDB
+  userId: string; // ID do usuário que fez o pedido
+  items: IOrderItem[]; // Lista de itens do pedido
+  total: number; // Preço total do pedido (incluindo taxa de entrega)
+  deliveryFee: number; // Taxa de entrega separada
+  address: Address; // O endereço de entrega do pedido
+  paymentMethod: PaymentMethod; // O método de pagamento usado
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'; // Status do pedido
+  orderIdCustom: string; // Um ID gerado no frontend ou um hash para referência
+  timestamp: string; // Data e hora em que o pedido foi criado (string ISO 8601)
+  createdAt?: string; // Se o Mongoose tiver timestamps (automaticamente adicionado)
+  updatedAt?: string; // Se o Mongoose tiver timestamps (automaticamente adicionado)
 }

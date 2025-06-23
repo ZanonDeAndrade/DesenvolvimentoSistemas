@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
       estado: { type: String, required: true },
       cep: { type: String, required: true },
     },
-    required: true 
+    required: false
   },
 });
 

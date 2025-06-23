@@ -31,9 +31,6 @@ app.use('/backend-assets', express.static(assetsPath, {
 }));
 // -------------------------------------------------------------------------
 
-app.get('/', (req, res) => {
-    res.send('API de Autenticação e Produtos em Funcionamento!');
-});
 
 app.use('/auth', authRoutes);
 app.use('/auth', registerRoutes);

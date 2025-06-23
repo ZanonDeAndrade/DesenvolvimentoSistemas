@@ -1,13 +1,11 @@
-// frontend/src/components/Checkout.tsx
-import React, { useState, useEffect } from 'react'; // Adicionado useEffect para decodificar o token
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // Importar jwtDecode
+import { jwtDecode } from 'jwt-decode';
 import { useCart } from '../Cart/CartContext';
 import './Checkout.css';
-import { updateUserData } from '../../services/api'; // Importa a função de API para atualizar o usuário
-import type { Address as BackendAddress, PaymentMethod } from '../Types'; // Importa a tipagem de endereço do Types/index.ts e PaymentMethod
+import { updateUserData, getAddressByCep } from '../../services/api'; // Mantenha createOrder
+import type { Address as BackendAddress, PaymentMethod, ViaCepAddress, } from '../Types'; // Mantenha IOrderItem, IOrder
 
-// Tipagem para o payload do JWT
 interface JwtPayload {
   userId: string;
   email: string;
@@ -16,19 +14,18 @@ interface JwtPayload {
   iat: number;
 }
 
-// Componente de Checkout
 const Checkout: React.FC = () => {
   const { state, clearCart } = useCart();
   const navigate = useNavigate();
 
-  const [userId, setUserId] = useState<string | null>(null); // Estado para armazenar o userId
+  const [userId, setUserId] = useState<string | null>(null);
   const [address, setAddress] = useState<BackendAddress>({
     rua: '',
     numero: '',
     complemento: '',
     bairro: '',
     cidade: '',
-    estado: '', // Adicionado estado
+    estado: '',
     cep: ''
   });
 
@@ -39,48 +36,85 @@ const Checkout: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Efeito para obter o userId do token ao carregar o componente
+  const [addressFieldsLocked, setAddressFieldsLocked] = useState(false);
+
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const decodedToken = jwtDecode<JwtPayload>(token);
         setUserId(decodedToken.userId);
+        console.log('Frontend: userId extraído do token:', decodedToken.userId);
       } catch (error) {
-        console.error('Erro ao decodificar token no Checkout:', error);
-        // Opcional: Redirecionar para login se o token for inválido
-        // navigate('/Login');
+        console.error('Frontend: Erro ao decodificar token no Checkout:', error);
       }
     } else {
-      console.warn('Nenhum token encontrado no Checkout. Usuário não autenticado.');
-      // Opcional: Redirecionar para login se não houver token
-      // navigate('/Login');
+      console.warn('Frontend: Nenhum token encontrado no Checkout. Usuário não autenticado.');
     }
-  }, []); // Executa apenas uma vez ao montar o componente
+  }, []);
 
-  // Handler para campos de endereço
+  useEffect(() => {
+    const cleanCep = address.cep.replace(/\D/g, '');
+
+    if (cleanCep.length === 8) {
+      console.log('Frontend: CEP completo detectado, buscando endereço:', cleanCep);
+      const fetchAddress = async () => {
+        setIsLoading(true);
+        setErrors(prev => ({ ...prev, cep: '' }));
+
+        const fetchedAddress: ViaCepAddress | null = await getAddressByCep(cleanCep);
+        setIsLoading(false);
+
+        if (fetchedAddress && !fetchedAddress.erro) {
+          console.log('Frontend: Endereço ViaCEP encontrado:', fetchedAddress);
+          setAddress(prevAddress => ({
+            ...prevAddress,
+            cidade: fetchedAddress.localidade || '',
+            estado: fetchedAddress.uf || '',
+            complemento: fetchedAddress.complemento || prevAddress.complemento || '',
+          }));
+          setAddressFieldsLocked(true);
+        } else {
+          console.warn('Frontend: CEP não encontrado ou inválido pela ViaCEP:', cleanCep);
+          setErrors(prev => ({ ...prev, cep: 'CEP não encontrado ou inválido.' }));
+          setAddress(prevAddress => ({
+            ...prevAddress,
+            cidade: '',
+            estado: '',
+          }));
+          setAddressFieldsLocked(false);
+        }
+      };
+      fetchAddress();
+    } else {
+      if (addressFieldsLocked) {
+        console.log('Frontend: CEP incompleto ou apagado, desbloqueando campos de endereço.');
+        setAddressFieldsLocked(false);
+      }
+      if (errors.cep === 'CEP não encontrado ou inválido.' || errors.cep === 'Erro ao buscar CEP. Verifique a conexão ou o CEP.') {
+        setErrors(prev => ({ ...prev, cep: '' }));
+      }
+    }
+  }, [address.cep]);
+
   const handleAddressChange = (field: keyof BackendAddress, value: string) => {
     setAddress(prev => ({ ...prev, [field]: value }));
-    // Limpar erro do campo quando o usuário começar a digitar
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
 
-  // Handler para campos de método de pagamento
   const handlePaymentMethodChange = (field: keyof PaymentMethod, value: any) => {
     setPaymentMethod(prev => ({ ...prev, [field]: value }));
-    // Limpar erro do campo quando o usuário começar a digitar
-    if (errors[field as keyof Record<string, string>]) { // Ajuste na tipagem para 'errors'
+    if (errors[field as keyof Record<string, string>]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
 
-  // Função de validação do formulário
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    // Validar endereço
     if (!address.rua.trim()) {
       newErrors.rua = 'Rua é obrigatória';
     }
@@ -93,21 +127,20 @@ const Checkout: React.FC = () => {
     if (!address.cidade.trim()) {
       newErrors.cidade = 'Cidade é obrigatória';
     }
-    if (!address.estado.trim()) { // Validar estado
-        newErrors.estado = 'Estado é obrigatório';
+    if (!address.estado.trim()) {
+      newErrors.estado = 'Estado é obrigatório';
     } else if (address.estado.trim().length !== 2) {
-        newErrors.estado = 'Estado deve ter 2 caracteres (UF)';
+      newErrors.estado = 'Estado deve ter 2 caracteres (UF)';
     }
     if (!address.cep.trim()) {
-      newErrors.cep = 'CEP é obrigatório';
+      newErrors.cep = 'CEP é obrigatória';
     } else if (!/^\d{5}-?\d{3}$/.test(address.cep)) {
       newErrors.cep = 'CEP deve ter formato 00000-000';
     }
 
-    // Validar método de pagamento
     if (paymentMethod.type === 'credit' || paymentMethod.type === 'debit') {
-      if (!paymentMethod.cardNumber || paymentMethod.cardNumber.length < 16) {
-        newErrors.cardNumber = 'Número do cartão inválido';
+      if (!paymentMethod.cardNumber || paymentMethod.cardNumber.replace(/\s/g, '').length < 16) {
+        newErrors.cardNumber = 'Número do cartão inválido (mín. 16 dígitos)';
       }
       if (!paymentMethod.cardName?.trim()) {
         newErrors.cardName = 'Nome no cartão é obrigatório';
@@ -116,39 +149,46 @@ const Checkout: React.FC = () => {
         newErrors.cardExpiry = 'Data de validade deve ter formato MM/AA';
       }
       if (!paymentMethod.cardCVV || paymentMethod.cardCVV.length < 3) {
-        newErrors.cardCVV = 'CVV inválido';
+        newErrors.cardCVV = 'CVV inválido (mín. 3 dígitos)';
       }
     } else if (paymentMethod.type === 'cash' && (paymentMethod.cashChange === undefined || paymentMethod.cashChange < total)) {
-        newErrors.cashChange = `Valor do troco deve ser maior ou igual ao total (R$ ${total.toFixed(2).replace('.', ',')})`;
+      newErrors.cashChange = `Valor do troco deve ser maior ou igual ao total (R$ ${total.toFixed(2).replace('.', ',')})`;
     }
 
 
     setErrors(newErrors);
+    console.log('Frontend: Erros de validação do formulário:', newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmitOrder = async () => {
+    console.log('Frontend: Início de handleSubmitOrder.');
+
     if (!validateForm()) {
+      console.warn('Frontend: Formulário inválido. Abortando.');
       return;
     }
 
     if (!userId) {
+      console.error('Frontend: userId é nulo. Usuário não autenticado.');
       alert('Usuário não autenticado. Por favor, faça login novamente.');
-      navigate('/Login'); // Redirecionar para login se userId não estiver disponível
+      navigate('/Login');
       return;
     }
 
     setIsLoading(true);
+    console.log('Frontend: isLoading definido para true.');
 
     try {
       const token = localStorage.getItem('token');
       if (!token) {
+        console.error('Frontend: Token de autenticação ausente.');
         alert('Token de autenticação ausente. Faça login novamente.');
         navigate('/Login');
         return;
       }
+      console.log('Frontend: Token JWT presente.');
 
-      // Preparar os dados do endereço para o backend (garantir que os nomes dos campos correspondem)
       const addressToSend: BackendAddress = {
         rua: address.rua,
         numero: address.numero,
@@ -156,42 +196,38 @@ const Checkout: React.FC = () => {
         bairro: address.bairro,
         cidade: address.cidade,
         estado: address.estado,
-        cep: address.cep,
+        cep: address.cep.replace(/\D/g, ''),
       };
+      console.log('Frontend: Dados do endereço para enviar:', addressToSend);
 
-      // 1. Enviar/Atualizar Endereço do Usuário no Backend
+      // --- Ponto crítico: Requisição de atualização de endereço ---
+      console.log('Frontend: Tentando atualizar endereço do usuário...');
       await updateUserData(userId, { endereco: addressToSend }, token);
-      console.log('Endereço do usuário atualizado no backend.');
+      console.log('Frontend: updateUserData completado com SUCESSO (frontend perspective).');
+      console.log('Frontend: Endereço do usuário atualizado no backend.');
 
-      // 2. Aqui você faria a chamada para criar o pedido no backend
-      // Por enquanto, vamos apenas simular e navegar
+      
+      console.log('Frontend: Tentando criar pedido...');
 
-      const orderData = {
-        items: state.items,
-        total: state.total + deliveryFee, // Usar deliveryFee que está definido no componente
-        address: addressToSend, // Usar o objeto de endereço no formato do backend
-        paymentMethod,
-        timestamp: new Date().toISOString()
-      };
-
-      console.log('Dados do Pedido para envio (ainda não enviado para o BD de pedidos):', orderData);
-
-      // Limpar carrinho
       clearCart();
+      console.log('Frontend: Carrinho limpo.');
 
-      // Navegar para página de confirmação
-      navigate('/OrderConfirmation/OrderConfirmation', {
-        state: {
-          orderId: Math.random().toString(36).substr(2, 9).toUpperCase(), // ID de exemplo
-          total: state.total + deliveryFee
-        }
-      });
+      navigate('/OrderConfirmation/OrderConfirmation');
+      console.log('Frontend: Navegando para a confirmação do pedido.');
+      // --- FIM DA LÓGICA DE CRIAÇÃO DE PEDIDO RESTAURADA ---
 
     } catch (error) {
-      console.error('Erro ao processar pedido ou atualizar endereço:', error);
-      alert('Erro ao processar pedido. Tente novamente.');
+      console.error('Frontend: Erro no bloco try-catch de handleSubmitOrder:', error);
+      if ((error as any).response) {
+        console.error('Frontend: Detalhes do erro da resposta do servidor:', (error as any).response.data);
+        console.error('Frontend: Status do erro:', (error as any).response.status);
+      } else if (error instanceof Error) {
+        console.error('Frontend: Mensagem de erro:', error.message);
+      }
+      alert('Erro ao processar pedido. Tente novamente. Verifique o console para mais detalhes.');
     } finally {
       setIsLoading(false);
+      console.log('Frontend: isLoading definido para false. Fim de handleSubmitOrder.');
     }
   };
 
@@ -233,6 +269,7 @@ const Checkout: React.FC = () => {
                 <input
                   type="text"
                   id="rua"
+                  name="rua"
                   value={address.rua}
                   onChange={(e) => handleAddressChange('rua', e.target.value)}
                   className={errors.rua ? 'error' : ''}
@@ -246,6 +283,7 @@ const Checkout: React.FC = () => {
                 <input
                   type="text"
                   id="numero"
+                  name="numero"
                   value={address.numero}
                   onChange={(e) => handleAddressChange('numero', e.target.value)}
                   className={errors.numero ? 'error' : ''}
@@ -260,9 +298,11 @@ const Checkout: React.FC = () => {
               <input
                 type="text"
                 id="complemento"
-                value={address.complemento || ''} // Usar || '' para evitar undefined
+                name="complemento"
+                value={address.complemento || ''}
                 onChange={(e) => handleAddressChange('complemento', e.target.value)}
                 placeholder="Apartamento, bloco, etc."
+                readOnly={addressFieldsLocked && !!address.complemento}
               />
             </div>
 
@@ -272,6 +312,7 @@ const Checkout: React.FC = () => {
                 <input
                   type="text"
                   id="bairro"
+                  name="bairro"
                   value={address.bairro}
                   onChange={(e) => handleAddressChange('bairro', e.target.value)}
                   className={errors.bairro ? 'error' : ''}
@@ -281,14 +322,31 @@ const Checkout: React.FC = () => {
               </div>
 
               <div className="form-group">
+                <label htmlFor="cep">CEP *</label>
+                <input
+                  type="text"
+                  id="cep"
+                  name="cep"
+                  value={address.cep}
+                  onChange={(e) => handleAddressChange('cep', formatZipCode(e.target.value))}
+                  className={errors.cep ? 'error' : ''}
+                  placeholder="00000-000"
+                  maxLength={9}
+                />
+                {errors.cep && <span className="error-message">{errors.cep}</span>}
+              </div>
+
+              <div className="form-group">
                 <label htmlFor="cidade">Cidade *</label>
                 <input
                   type="text"
                   id="cidade"
+                  name="cidade"
                   value={address.cidade}
                   onChange={(e) => handleAddressChange('cidade', e.target.value)}
                   className={errors.cidade ? 'error' : ''}
                   placeholder="Nome da cidade"
+                  readOnly={addressFieldsLocked && !!address.cidade}
                 />
                 {errors.cidade && <span className="error-message">{errors.cidade}</span>}
               </div>
@@ -299,30 +357,19 @@ const Checkout: React.FC = () => {
               <input
                 type="text"
                 id="estado"
+                name="estado"
                 value={address.estado}
-                onChange={(e) => handleAddressChange('estado', e.target.value.toUpperCase())} // Converter para maiúsculas
+                onChange={(e) => handleAddressChange('estado', e.target.value.toUpperCase())}
                 className={errors.estado ? 'error' : ''}
                 placeholder="UF (Ex: SP)"
                 maxLength={2}
+                readOnly={addressFieldsLocked && !!address.estado}
               />
               {errors.estado && <span className="error-message">{errors.estado}</span>}
             </div>
-
-            <div className="form-group">
-              <label htmlFor="cep">CEP *</label>
-              <input
-                type="text"
-                id="cep"
-                value={address.cep}
-                onChange={(e) => handleAddressChange('cep', formatZipCode(e.target.value))}
-                className={errors.cep ? 'error' : ''}
-                placeholder="00000-000"
-              />
-              {errors.cep && <span className="error-message">{errors.cep}</span>}
-            </div>
           </div>
 
-          {/* Método de Pagamento */}
+          {/* Método de Pagamento (restante do código igual) */}
           <div className="form-section">
             <h2>💳 Método de Pagamento</h2>
 
@@ -431,7 +478,6 @@ const Checkout: React.FC = () => {
               </div>
             )}
 
-            {/* Campo para troco se for em dinheiro */}
             {paymentMethod.type === 'cash' && (
               <div className="form-group">
                 <label htmlFor="cashChange">Troco para *</label>
@@ -450,7 +496,6 @@ const Checkout: React.FC = () => {
               </div>
             )}
 
-            {/* Informações para PIX */}
             {paymentMethod.type === 'pix' && (
               <div className="pix-info">
                 <p>📱 Após confirmar o pedido, você receberá o código PIX para pagamento.</p>
@@ -459,7 +504,6 @@ const Checkout: React.FC = () => {
           </div>
         </div>
 
-        {/*Resumo do pedido*/}
         <div className="order-summary">
           <div className="summary-card">
             <h3>Resumo do Pedido</h3>

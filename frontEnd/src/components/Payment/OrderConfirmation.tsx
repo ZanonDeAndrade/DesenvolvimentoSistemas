@@ -12,7 +12,7 @@ const OrderConfirmation: React.FC = () => {
   const location = useLocation();
   const state = location.state as LocationState;
 
-  const { orderId, total } = state || { orderId: 'ERR001', total: 0 };
+  const { orderId, total } = state || { orderId: 'ERR001', total: 0}; //Arrumar o valor padrão para valor total do pedido
 
 
   // Função para redirecionar para a página de compras
@@ -64,13 +64,13 @@ const OrderConfirmation: React.FC = () => {
             className="new-order-btn"
             onClick={handleNewOrder}
           >
-            🍽️ Fazer Novo Pedido
+             Fazer Novo Pedido
           </button>
         </div>
 
         <div className="contact-info">
           <p>
-            Dúvidas? Entre em contato: 📞 (11) 99999-9999
+            Dúvidas? Entre em contato: 📞 (55) 99999-9999
           </p>
         </div>
       </div>

@@ -1,7 +1,8 @@
 // frontend/src/services/api.ts
 import axios from 'axios';
 // Certifique-se de que o caminho para 'Types' está correto e que 'Address' é exportado de lá
-import type { Product, Address, User } from '../components/Types/index'; // Importe os tipos, incluindo Address e User se precisar
+// Importe os tipos que você já tinha e adicione ViaCepAddress, CartItem, PaymentMethod, IOrder, IOrderItem
+import type { Product, Address, User, ViaCepAddress, PaymentMethod, IOrder, IOrderItem } from '../components/Types/index'; // AQUI ESTÁ O CAMINHO DA IMPORTAÇÃO.
 
 const API_BASE_URL = 'http://localhost:5000'; // URL do seu backend
 
@@ -49,10 +50,6 @@ export const getSushiItems = async (): Promise<Product[]> => { // Pode tipar com
   }
 };
 
-// ==============================================================================
-// ADICIONE A FUNÇÃO 'updateUserData' AQUI!
-// ==============================================================================
-
 /**
  * Envia uma requisição PUT para atualizar os dados de um usuário,
  * especificamente o subdocumento de endereço.
@@ -75,4 +72,60 @@ export const updateUserData = async (userId: string, data: { endereco: Address }
   }
 };
 
-// ... adicione mais funções se precisar de outras operações CRUD ou filtros
+/**
+ * Busca dados de endereço completos a partir de um CEP usando a API ViaCEP.
+ * @param cep O CEP a ser pesquisado (apenas dígitos).
+ * @returns Um objeto ViaCepAddress com os dados do endereço, ou null se não for encontrado/erro.
+ */
+export const getAddressByCep = async (cep: string): Promise<ViaCepAddress | null> => {
+  // Remover caracteres não numéricos do CEP
+  const cleanCep = cep.replace(/\D/g, '');
+
+  // Validação simples: CEP deve ter 8 dígitos
+  if (cleanCep.length !== 8) {
+    console.warn('CEP inválido. Deve conter 8 dígitos.');
+    return null;
+  }
+
+  try {
+    const response = await axios.get<ViaCepAddress>(`https://viacep.com.br/ws/${cleanCep}/json/`);
+
+    // A ViaCEP retorna um objeto com 'erro: true' se o CEP não for encontrado
+    if (response.data && (response.data as any).erro) { // Usar (response.data as any).erro para acessar a propriedade dinamicamente
+      console.warn(`CEP ${cleanCep} não encontrado pela ViaCEP.`);
+      return null;
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error(`Erro ao buscar endereço para o CEP ${cleanCep}:`, error);
+    return null;
+  }
+};
+
+// ==============================================================================
+// FUNÇÕES PARA PEDIDOS (CREATE AND GET)
+// ==============================================================================
+
+// Função para CRIAR um pedido
+export const createOrder = async (orderData: {
+  userId: string;
+  items: IOrderItem[]; // <--- MUDANÇA ESSENCIAL AQUI: DEVE SER IOrderItem[]
+  total: number;
+  deliveryFee: number;
+  address: Address;
+  paymentMethod: PaymentMethod;
+  orderIdCustom: string;
+}, token: string): Promise<IOrder> => {
+  try {
+    const response = await api.post<IOrder>('/orders', orderData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao criar pedido:', error);
+    throw error;
+  }
+};
