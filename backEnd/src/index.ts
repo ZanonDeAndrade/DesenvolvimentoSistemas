@@ -3,11 +3,13 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import path from 'path'; // <--- IMPORTE O MÓDULO PATH
+import path from 'path';
 import authRoutes from './routes/login';
 import registerRoutes from './routes/register';
 import productRoutes from './routes/products';
-import adressRoutes from './routes/adress'; // Importa as rotas de endereço
+import adressRoutes from './routes/adress';
+import paymentRoutes from './routes/payment'; 
+import ordersRoutes from './routes/orders'; 
 
 dotenv.config();
 
@@ -21,21 +23,18 @@ const PORT = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 
-// --- ADICIONE ESTAS DUAS LINHAS PARA SERVIR OS ASSETS ESTÁTICOS DO BACKEND ---
-// Cria um caminho absoluto para a pasta 'assets' dentro de 'src'
 const assetsPath = path.join(__dirname, 'assets');
-console.log(`Servindo assets estáticos de: ${assetsPath}`); // Para debug
-// Configura o Express para servir arquivos estáticos de 'assetsPath' sob o prefixo '/backend-assets'
+console.log(`Servindo assets estáticos de: ${assetsPath}`);
 app.use('/backend-assets', express.static(assetsPath, {
-  maxAge: '1y'  // Define o cache para 1 ano, você pode ajustar conforme necessário
+  maxAge: '1y'
 }));
-// -------------------------------------------------------------------------
-
 
 app.use('/auth', authRoutes);
 app.use('/auth', registerRoutes);
 app.use('/products', productRoutes);
-app.use('/', adressRoutes); // Rotas de produtos sob o prefixo /products
+app.use('/', adressRoutes);
+app.use('/payment', paymentRoutes); 
+app.use('/orders', ordersRoutes); 
 
 mongoose.connect(process.env.MONGO_URI as string)
   .then(() => {

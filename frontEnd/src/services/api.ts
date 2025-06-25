@@ -1,18 +1,31 @@
 // frontend/src/services/api.ts
 import axios from 'axios';
-// Certifique-se de que o caminho para 'Types' está correto e que 'Address' é exportado de lá
-// Importe os tipos que você já tinha e adicione ViaCepAddress, CartItem, PaymentMethod, IOrder, IOrderItem
-import type { Product, Address, User, ViaCepAddress, PaymentMethod, IOrder, IOrderItem } from '../components/Types/index'; // AQUI ESTÁ O CAMINHO DA IMPORTAÇÃO.
 
-const API_BASE_URL = 'http://localhost:5000'; // URL do seu backend
+// <<-- IMPORTANTE: Importe os tipos canônicos do seu arquivo central `types/index.ts`
+import type {
+  Product as IProduct, // Renomeado para evitar conflito com 'Product' de outras libs
+  User,
+  ViaCepAddress,
+  Address,        // <<-- Usaremos esta para endereço
+  IOrderPayload,  // <<-- Usaremos esta para o payload de criação de pedido
+  IOrder          // <<-- Usaremos esta para a resposta do pedido (substituindo IOrderResponse)
+} from '../components/Types/index'; // Caminho corrigido para a pasta 'types' (não 'components/Types/index')
+
+// <<-- REMOVIDO: As interfaces IFrontendItem, IFrontendEndereco, ICreateOrderPayload e IOrderResponse
+// <<-- FORAM REMOVIDAS DAQUI, POIS AGORA USAMOS AS DEFINIÇÕES CANÔNICAS DE `../types`
+
+// --- CONFIGURAÇÃO DO AXIOS ---
+const API_BASE_URL = 'http://localhost:5000'; // <<-- Confirmado: Sua porta é 5000
 
 const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
-export const getProducts = async (): Promise<Product[]> => {
+
+// --- FUNÇÕES DE BUSCA DE PRODUTOS (MANTIDAS) ---
+export const getProducts = async (): Promise<IProduct[]> => {
   try {
-    const response = await api.get<Product[]>('/products');
+    const response = await api.get<IProduct[]>('/products');
     return response.data;
   } catch (error) {
     console.error('Erro ao buscar produtos:', error);
@@ -20,9 +33,9 @@ export const getProducts = async (): Promise<Product[]> => {
   }
 };
 
-export const getCombos = async (): Promise<Product[]> => { // Pode tipar como Combo[] se quiser mais rigor
+export const getCombos = async (): Promise<IProduct[]> => {
   try {
-    const response = await api.get<Product[]>('/products/combos');
+    const response = await api.get<IProduct[]>('/products/combos');
     return response.data;
   } catch (error) {
     console.error('Erro ao buscar combos:', error);
@@ -30,9 +43,9 @@ export const getCombos = async (): Promise<Product[]> => { // Pode tipar como Co
   }
 };
 
-export const getBebidas = async (): Promise<Product[]> => { // Pode tipar como Bebida[]
+export const getBebidas = async (): Promise<IProduct[]> => {
   try {
-    const response = await api.get<Product[]>('/products/bebidas');
+    const response = await api.get<IProduct[]>('/products/bebidas');
     return response.data;
   } catch (error) {
       console.error('Erro ao buscar bebidas:', error);
@@ -40,9 +53,9 @@ export const getBebidas = async (): Promise<Product[]> => { // Pode tipar como B
   }
 };
 
-export const getSushiItems = async (): Promise<Product[]> => { // Pode tipar como SushiItem[]
+export const getSushiItems = async (): Promise<IProduct[]> => {
   try {
-    const response = await api.get<Product[]>('/products/sushi-items');
+    const response = await api.get<IProduct[]>('/products/sushi-items');
     return response.data;
   } catch (error) {
       console.error('Erro ao buscar sushi items:', error);
@@ -54,10 +67,11 @@ export const getSushiItems = async (): Promise<Product[]> => { // Pode tipar com
  * Envia uma requisição PUT para atualizar os dados de um usuário,
  * especificamente o subdocumento de endereço.
  * @param userId O ID do usuário a ser atualizado.
- * @param data O objeto contendo o subdocumento 'endereco'.
+ * @param data O objeto contendo o subdocumento 'endereco' (do tipo Address).
  * @param token O token JWT de autenticação.
  * @returns Os dados do usuário atualizado.
  */
+// <<-- ATENÇÃO: O tipo do `endereco` agora é `Address` do seu arquivo `types`
 export const updateUserData = async (userId: string, data: { endereco: Address }, token: string): Promise<User> => {
   try {
     const response = await api.put<User>(`/users/${userId}/address`, data, {
@@ -68,7 +82,7 @@ export const updateUserData = async (userId: string, data: { endereco: Address }
     return response.data;
   } catch (error) {
     console.error(`Erro ao atualizar endereço do usuário ${userId}:`, error);
-    throw error; // Rejoga o erro para ser tratado pelo componente que chamou
+    throw error;
   }
 };
 
@@ -78,10 +92,8 @@ export const updateUserData = async (userId: string, data: { endereco: Address }
  * @returns Um objeto ViaCepAddress com os dados do endereço, ou null se não for encontrado/erro.
  */
 export const getAddressByCep = async (cep: string): Promise<ViaCepAddress | null> => {
-  // Remover caracteres não numéricos do CEP
   const cleanCep = cep.replace(/\D/g, '');
 
-  // Validação simples: CEP deve ter 8 dígitos
   if (cleanCep.length !== 8) {
     console.warn('CEP inválido. Deve conter 8 dígitos.');
     return null;
@@ -90,8 +102,7 @@ export const getAddressByCep = async (cep: string): Promise<ViaCepAddress | null
   try {
     const response = await axios.get<ViaCepAddress>(`https://viacep.com.br/ws/${cleanCep}/json/`);
 
-    // A ViaCEP retorna um objeto com 'erro: true' se o CEP não for encontrado
-    if (response.data && (response.data as any).erro) { // Usar (response.data as any).erro para acessar a propriedade dinamicamente
+    if (response.data && (response.data as any).erro) {
       console.warn(`CEP ${cleanCep} não encontrado pela ViaCEP.`);
       return null;
     }
@@ -103,29 +114,55 @@ export const getAddressByCep = async (cep: string): Promise<ViaCepAddress | null
   }
 };
 
+
 // ==============================================================================
-// FUNÇÕES PARA PEDIDOS (CREATE AND GET)
+// FUNÇÕES PARA PEDIDOS (AGORA USANDO OS TIPOS CANÔNICOS)
 // ==============================================================================
 
-// Função para CRIAR um pedido
-export const createOrder = async (orderData: {
-  userId: string;
-  items: IOrderItem[]; // <--- MUDANÇA ESSENCIAL AQUI: DEVE SER IOrderItem[]
-  total: number;
-  deliveryFee: number;
-  address: Address;
-  paymentMethod: PaymentMethod;
-  orderIdCustom: string;
-}, token: string): Promise<IOrder> => {
+/**
+ * Envia um novo pedido para o backend.
+ * @param orderData Os dados do pedido, conforme esperado pelo backend (do tipo IOrderPayload).
+ * @param token O token JWT de autenticação do usuário.
+ * @returns O objeto do pedido criado, retornado pelo backend (do tipo IOrder).
+ */
+// <<-- ATENÇÃO: O payload agora é IOrderPayload e o retorno é IOrder
+export const createOrder = async (orderData: IOrderPayload, token?: string): Promise<IOrder> => {
   try {
-    const response = await api.post<IOrder>('/orders', orderData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const headers: { [key: string]: string } = {
+      'Content-Type': 'application/json',
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    } else {
+      console.warn("Nenhum token fornecido para criar o pedido. A rota pode exigir autenticação.");
+    }
+
+    // <<-- O Axios vai tentar mapear a resposta para IOrder.
+    // <<-- O BACKEND DEVE RETORNAR UM OBJETO QUE SE ENCAIXE EM IOrder (com Address completo)
+    const response = await api.post<IOrder>('/orders', orderData, { headers });
     return response.data;
   } catch (error) {
     console.error('Erro ao criar pedido:', error);
     throw error;
   }
 };
+
+// Exemplo: Função para buscar pedidos do usuário (você pode adicionar filtros, etc.)
+// <<-- ATENÇÃO: O retorno agora é Promise<IOrder[]>
+export const getOrdersByUserId = async (userId: string, token: string): Promise<IOrder[]> => {
+  try {
+    const response = await api.get<IOrder[]>(`/orders?idCliente=${userId}`, { // Exemplo de filtro por idCliente
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Erro ao buscar pedidos do usuário ${userId}:`, error);
+    throw error;
+  }
+};
+
+
+export default api;

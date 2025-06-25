@@ -1,12 +1,11 @@
-// frontend/src/types/index.ts (ou types.ts)
+// frontend/src/types/index.ts
 
 // ===============================================
 // Interfaces de Produto
 // ===============================================
 
 export interface Product {
-  _id: string; // O ID do MongoDB
-  id?: number;  // Opcional, se o _id é o principal
+  _id: string; // O ID do MongoDB - ESTE É O CAMPO QUE USAMOS PARA O CARRINHO/PEDIDO
   name: string;
   description?: string;
   price: number;
@@ -34,7 +33,6 @@ export interface SushiItemProduct extends Product {
   details: string[];
 }
 
-// Sua interface para as abas de categoria (se usada)
 export interface CategoryTab {
   id: string;
   name: string;
@@ -42,16 +40,18 @@ export interface CategoryTab {
 }
 
 // ===============================================
-// Interfaces de Endereço e Usuário
+// Interfaces de Endereço e Usuário (CRÍTICO AQUI!)
 // ===============================================
 
+// ESTA É A DEFINIÇÃO CANÔNICA DE ENDEREÇO.
+// Todos os outros lugares (backend, api.ts, outros componentes) devem respeitar esta estrutura.
 export interface Address {
   rua: string;
   numero: string;
-  complemento?: string;
+  complemento?: string; // Opcional
   bairro: string;
   cidade: string;
-  estado: string;
+  estado: string; // <<-- ESSENCIAL! Deve estar presente na resposta do backend
   cep: string;
 }
 
@@ -87,58 +87,65 @@ export interface ViaCepAddress {
   logradouro: string;
   complemento: string;
   bairro: string;
-  localidade: string; // Cidade
-  uf: string;        // Estado
+  localidade: string;
+  uf: string;
   ibge: string;
   gia: string;
   ddd: string;
   siafi: string;
-  erro?: boolean; // A ViaCEP retorna esta propriedade se o CEP não for encontrado
+  erro?: boolean;
 }
 
 // ===============================================
-// NOVAS INTERFACES (AS QUE ESTAVAM FALTANDO NO SEU ARQUIVO)
+// Interfaces para Carrinho e Pedido
 // ===============================================
 
-/**
- * Interface para um item dentro do carrinho no frontend.
- * Corresponde aos dados do produto mais a quantidade.
- */
 export interface CartItem {
-  id: string; // O _id do produto do MongoDB
+  id: string; // Corresponde a Product._id
   name: string;
   price: number;
   image: string;
   quantity: number;
+  notes?: string;
+}
+
+export interface IItem {
+  idProduto: string;
+  nomeProduto: string;
+  quantidade: number;
+  precoUnitario: number;
+  observacoes?: string;
+}
+
+export interface IOrderPayload {
+  idCliente: string;
+  nomeCliente: string;
+  enderecoEntrega: Address; // Garante que Address completa é enviada
+  itens: IItem[];
+  valorTotal: number;
+  metodoPagamento: 'dinheiro' | 'pix' | 'cartao de credito' | 'cartao de debito';
+  observacoesGerais?: string;
 }
 
 /**
- * Interface para um item dentro de um pedido (no backend e frontend).
- * Reflete o que é salvo no modelo Order do Mongoose.
- */
-export interface IOrderItem {
-  productId: string; // Será o _id do produto no MongoDB
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-}
-
-/**
- * Interface principal para o modelo de Pedido.
- * Reflete o esquema do Mongoose para Pedidos.
+ * Interface para o objeto de pedido retornado pelo backend (`IOrder`).
+ * ESTA É A INTERFACE QUE O BACKEND DEVE RETORNAR PARA O PEDIDO.
+ * A propriedade `enderecoEntrega` DEVE SER DO TIPO `Address` COMPLETO.
  */
 export interface IOrder {
-  _id: string; // ID do pedido no MongoDB
-  userId: string; // ID do usuário que fez o pedido
-  items: IOrderItem[]; // Lista de itens do pedido
-  total: number; // Preço total do pedido (incluindo taxa de entrega)
-  deliveryFee: number; // Taxa de entrega separada
-  address: Address; // O endereço de entrega do pedido
-  paymentMethod: PaymentMethod; // O método de pagamento usado
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'; // Status do pedido
-  orderIdCustom: string; // Um ID gerado no frontend ou um hash para referência
-  timestamp: string; // Data e hora em que o pedido foi criado (string ISO 8601)
-  createdAt?: string; // Se o Mongoose tiver timestamps (automaticamente adicionado)
-  updatedAt?: string; // Se o Mongoose tiver timestamps (automaticamente adicionado)
+  _id: string; // ID do MongoDB
+  idPedido: string; // UUID gerado pelo backend
+  idCliente: string;
+  nomeCliente: string;
+  enderecoEntrega: Address; // <<-- AQUI! Deve ser `Address`, não `IFrontendEndereco`
+  itens: IItem[];
+  valorTotal: number;
+  statusPedido: 'pendente' | 'confirmado' | 'em preparo' | 'a caminho' | 'entregue' | 'cancelado' | 'finalizado'; 
+  metodoPagamento: 'dinheiro' | 'pix' | 'cartao de credito' | 'cartao de debito';
+  observacoesGerais?: string;
+  dataHoraCriacao: string;
+  dataHoraAtualizacao: string;
+  dataHoraEntregaEstimada?: string;
+  dataHoraEntregue?: string;
+  entregadorId?: string;
 }

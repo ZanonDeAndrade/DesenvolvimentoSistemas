@@ -1,17 +1,14 @@
-// frontend/src/components/Shop.tsx
 import React, { useState, useEffect, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import type { Product, CategoryTab, SushiItemProduct } from "../Types/index"; // Importe Product do seu arquivo de tipos global
+import type { Product, CategoryTab, SushiItemProduct } from "../Types/index"; // Ajuste o caminho se necessário
 import { useCart } from "../Cart/CartContext";
 import "./Shop.css";
 import { ShoppingCart, User } from "lucide-react";
 
-// Importar as funções de API
-import { getProducts, getBebidas, getCombos, getSushiItems } from "../../services/api"; // Ajuste o caminho conforme necessário
+import { getProducts, getBebidas, getCombos, getSushiItems } from "../../services/api";
+import { useAuth } from '../../contexts/AuthContext'; // IMPORTANTE: Importe useAuth
 
-// Defina as categorias aqui, ou importe de um arquivo separado se elas forem estáticas
-// Exemplo:
 const categories: CategoryTab[] = [
   { id: "all", name: "Todos", icon: "🍱" },
   { id: "combos", name: "Combos", icon: "🍣" },
@@ -30,55 +27,78 @@ interface JwtPayload {
   iat: number;
 }
 
-// Componente principal da loja
 const Shop: React.FC = () => {
   const navigate = useNavigate();
   const { addItem } = useCart();
+  const { user, isLoading, logout } = useAuth(); // OBTENHA 'user', 'isLoading' E 'logout' do AuthContext
+
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedItem, setSelectedItem] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [observations, setObservations] = useState("");
   const [userName, setUserName] = useState<string>('');
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [shopLoading, setShopLoading] = useState<boolean>(true); // Renomeado
   const [error, setError] = useState<string | null>(null);
 
-  // --- Adicione a URL base do seu backend aqui ---
-  const API_BASE_URL = 'http://localhost:5000'; // OU a URL do seu backend em produção
-  // ---------------------------------------------
+  const API_BASE_URL = 'http://localhost:5000';
 
-  // Lógica de verificação do token (mantida igual)
+  // LÓGICA DE VERIFICAÇÃO DE AUTENTICAÇÃO E REDIRECIONAMENTO
+  // Isso só será executado DEPOIS que o AuthContext terminar de carregar
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    // Se o AuthContext ainda está carregando, não faça nada neste useEffect.
+    if (isLoading) {
+      console.log("Shop.tsx: AuthContext ainda carregando...");
+      return;
+    }
+
+    // Se AuthContext terminou de carregar E NÃO há um usuário logado
+    if (!user) {
+      console.log('Shop.tsx: Usuário não logado após inicialização do AuthContext. Redirecionando para o login.');
+      navigate('/Login/Login'); // Redireciona para a sua rota de login exata
+      return; // Importante para parar a execução do resto do useEffect
+    }
+
+    // Se há um usuário logado, continue com a verificação do token
+    if (user.token) {
       try {
-        const decodedToken = jwtDecode<JwtPayload>(token);
+        const decodedToken = jwtDecode<JwtPayload>(user.token);
         const currentTime = Date.now() / 1000;
 
         if (decodedToken.exp > currentTime) {
           const fullName = decodedToken.nome;
           const firstName = fullName.split(' ')[0];
           setUserName(firstName);
+          console.log("Shop.tsx: Token JWT válido, usuário logado:", decodedToken.nome);
         } else {
-          console.warn('Token JWT expirado. Redirecionando para o login.');
-          localStorage.removeItem('token');
-          navigate('/Login');
+          console.warn('Shop.tsx: Token JWT expirado. Redirecionando para o login.');
+          logout(); // Limpa o usuário no contexto e localStorage
+          navigate('/Login/Login'); // Redireciona para a sua rota de login exata
         }
       } catch (error) {
-        console.error('Erro ao decodificar token JWT:', error);
-        localStorage.removeItem('token');
-        navigate('/Login');
+        console.error('Shop.tsx: Erro ao decodificar token JWT ou token inválido:', error);
+        logout(); // Limpa o usuário no contexto e localStorage
+        navigate('/Login/Login'); // Redireciona para a sua rota de login exata
       }
     } else {
-      console.log('Nenhum token encontrado. Redirecionando para o login.');
-      navigate('/Login');
+        // Isso acontece se 'user' existe mas 'user.token' não (pode ser um estado inconsistente)
+        console.log('Shop.tsx: Usuário logado mas sem token no objeto user. Redirecionando.');
+        logout(); // Considerar deslogar o usuário em caso de inconsistência
+        navigate('/Login/Login');
     }
-  }, [navigate]);
+  }, [user, isLoading, navigate, logout]); // Dependências: user, isLoading do AuthContext, navigate, e logout
 
-  // Função para buscar produtos com base na categoria ativa (mantida como antes)
+  // Lógica para buscar produtos APENAS se o usuário estiver logado E o AuthContext terminou de carregar
   const fetchProductsByCategory = useCallback(async (category: string) => {
+    // Só continue se houver um usuário E o AuthContext terminou de carregar
+    if (!user || isLoading) {
+      setProducts([]); // Limpar produtos se não houver usuário ou ainda carregando
+      setShopLoading(false); // Definir como false para não ficar travado no loading
+      return;
+    }
+
     try {
-      setLoading(true);
+      setShopLoading(true);
       setError(null);
       let data: Product[] = [];
       switch (category) {
@@ -95,11 +115,11 @@ const Shop: React.FC = () => {
           const allSushiItems = await getSushiItems();
           data = allSushiItems.filter(item => item.category === category);
           break;
-        default:
-          data = await getProducts();
-          break;
         case 'bebidas':
           data = await getBebidas();
+          break;
+        default:
+          data = await getProducts();
           break;
       }
       setProducts(data);
@@ -107,14 +127,17 @@ const Shop: React.FC = () => {
       console.error(`Erro ao buscar produtos para a categoria ${category}:`, err);
       setError('Não foi possível carregar os produtos.');
     } finally {
-      setLoading(false);
+      setShopLoading(false);
     }
-  }, []);
+  }, [user, isLoading]); // Adicione user e isLoading como dependências
 
+  // NOVO useEffect para acionar a busca de produtos
   useEffect(() => {
-    fetchProductsByCategory(activeCategory);
-  }, [activeCategory, fetchProductsByCategory]);
-
+    // Chama fetchProductsByCategory apenas quando activeCategory muda E user está disponível E não está carregando
+    if (user && !isLoading) {
+      fetchProductsByCategory(activeCategory);
+    }
+  }, [activeCategory, fetchProductsByCategory, user, isLoading]);
 
   const filteredItems = products;
 
@@ -169,10 +192,30 @@ const Shop: React.FC = () => {
     navigate("/Cart/Cart");
   };
 
-  if (loading) {
+  // Lógica de carregamento principal para renderização
+  // Mostra um spinner enquanto o AuthContext está verificando a autenticação
+  if (isLoading) {
     return (
       <div className="shop-container">
-        <p>Carregando produtos...</p>
+        <p>Verificando autenticação...</p>
+      </div>
+    );
+  }
+
+  if (!user && !isLoading) { // Este caso só deveria ser alcançado se o redirecionamento acima falhou por algum motivo
+      return (
+        <div className="shop-container">
+          <p>Erro de autenticação. Por favor, faça login novamente.</p>
+          <button onClick={() => navigate('/Login/Login')}>Ir para Login</button>
+        </div>
+      );
+  }
+
+  // Se o AuthContext já verificou E há um usuário, mostre o loading dos produtos
+  if (shopLoading) {
+    return (
+      <div className="shop-container">
+        <p>Carregando produtos da loja...</p>
       </div>
     );
   }
@@ -216,7 +259,7 @@ const Shop: React.FC = () => {
       </div>
 
       <div className="items-grid">
-        {filteredItems.length === 0 && !loading && !error ? (
+        {filteredItems.length === 0 && !shopLoading && !error ? (
           <p>Nenhum produto encontrado para a categoria selecionada.</p>
         ) : (
           filteredItems.map((item) => (
@@ -226,11 +269,8 @@ const Shop: React.FC = () => {
               onClick={() => openModal(item)}
             >
               <div className="item-image">
-                {/* --- MUDANÇA CRUCIAL AQUI --- */}
                 <img src={`${API_BASE_URL}/${item.image}`} alt={item.name} 
                 loading="lazy"/>
-                
-                {/* ---------------------------- */}
               </div>
               <div className="item-info">
                 <h3>{item.name}</h3>
@@ -251,7 +291,6 @@ const Shop: React.FC = () => {
         )}
       </div>
 
-      {/*Modal para exibir detalhes do item selecionado*/}
       {selectedItem && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -265,10 +304,8 @@ const Shop: React.FC = () => {
 
             <div className="modal-body">
               <div className="product-image">
-                {/* --- MUDANÇA CRUCIAL AQUI TAMBÉM --- */}
                 <img src={`${API_BASE_URL}/${selectedItem.image}`} alt={selectedItem.name} 
                 loading="lazy"/>
-                {/* ---------------------------------- */}
               </div>
 
               <div className="product-details">
